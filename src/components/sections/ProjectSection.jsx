@@ -27,7 +27,7 @@ const ProjectSection = ({ ref }) => {
               "Inventory management system for high-volume water plants."
             }
             year={"2025"}
-            src={"/projects/2.jpeg"}
+            src={"/projects/2.jpg"}
           />
         </div>
 
@@ -37,7 +37,7 @@ const ProjectSection = ({ ref }) => {
             title={"Portfolio OS"}
             description={"A web-based operating system experience."}
             year={"2025"}
-            src={"/projects/3.jpeg"}
+            src={"/projects/3.jpg"}
           />
         </div>
       </div>
