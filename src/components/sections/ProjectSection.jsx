@@ -1,4 +1,3 @@
-import React from "react";
 import ProjectCard from "./project/ProjectCard";
 
 const ProjectSection = ({ ref }) => {
@@ -9,33 +8,26 @@ const ProjectSection = ({ ref }) => {
       </h2>
 
       <div className="flex flex-col gap-5">
-        {/* PROJECT 1 */}
         <div className="project-card" style={{ opacity: 0 }}>
           <ProjectCard
             title={"Help Deskly"}
-            description={"A command-line interface portfolio built with React."}
+            description={"An AI SAAS Customer Agent"}
             year={"2026"}
             src={"/projects/1.jpg"}
           />
         </div>
-
-        {/* PROJECT 2 */}
         <div className="project-card" style={{ opacity: 0 }}>
           <ProjectCard
-            title={"Supply Chain V1"}
-            description={
-              "Inventory management system for high-volume water plants."
-            }
+            title={"Placeholder Project"}
+            description={"Description Placeholder"}
             year={"2025"}
             src={"/projects/2.jpg"}
           />
         </div>
-
-        {/* PROJECT 3 */}
         <div className="project-card" style={{ opacity: 0 }}>
           <ProjectCard
-            title={"Portfolio OS"}
-            description={"A web-based operating system experience."}
+            title={"Placeholder Project"}
+            description={"Description placeholder"}
             year={"2025"}
             src={"/projects/3.jpg"}
           />

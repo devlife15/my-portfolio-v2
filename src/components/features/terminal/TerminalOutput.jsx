@@ -43,7 +43,7 @@ const TerminalOutput = ({ commandHistory }) => {
               : item.type === "system-header"
                 ? "text-white font-bold mt-4 mb-2 uppercase tracking-widest border-b border-white/10 pb-1 w-max"
                 : item.type === "system-title"
-                  ? "text-green-400 font-editorial font-bold text-lg mb-2"
+                  ? "text-green-400 font-editorial font-bold italic text-lg mb-2"
                   : item.type === "system-copyright"
                     ? "text-gray-500 text-[10px] mb-4 font-geistmono"
                     : item.type === "comment"

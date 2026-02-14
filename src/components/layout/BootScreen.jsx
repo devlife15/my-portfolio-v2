@@ -2,17 +2,15 @@
 
 import React, { useState } from "react";
 import { FiPower } from "react-icons/fi";
+import useSystemSound from "@/hooks/useSystemSound";
 
 const BootScreen = ({ onEnter }) => {
   // State to trigger the exit animation
   const [isFading, setIsFading] = useState(false);
+  const { playSound } = useSystemSound();
 
   const handleStart = () => {
-    // 1. Play the Startup Sound
-    const audio = new Audio("/songs/startup.mp3");
-    audio.volume = 0.3;
-    audio.play().catch((e) => console.log("Audio play failed", e));
-
+    playSound("startup");
     // 2. Start the fade-out animation
     setIsFading(true);
 
@@ -72,9 +70,9 @@ const BootScreen = ({ onEnter }) => {
       </div>
 
       {/* Technical Footer */}
-      <div className="absolute bottom-10 font-geistmono text-[9px] text-[#444] tracking-widest uppercase opacity-50">
+      {/* <div className="absolute bottom-10 font-geistmono text-[9px] text-[#444] tracking-widest uppercase opacity-50">
         Secure Connection • v2026.1
-      </div>
+      </div> */}
     </div>
   );
 };

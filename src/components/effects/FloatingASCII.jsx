@@ -1,45 +1,46 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const FloatingASCII = () => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return; // Safety check
+
     const ctx = canvas.getContext("2d");
 
     // CONFIGURATION
     const CHARS = "0123456789ABCDEFxy+*=";
-    const PARTICLE_COUNT = 150; // Total floating characters (adjust for density)
+    const PARTICLE_COUNT = 150;
     const FONT_SIZE = 12;
-    const CONNECTION_DIST = 0; // Set to 100 if you want lines connecting them (Network style)
-    const MOUSE_DIST = 150; // How close mouse needs to be to interact
+    const MOUSE_DIST = 150;
+
+    // 👇 DETECT MOBILE (Touch devices)
+    // If true, we disable all mouse interactions
+    const isMobile = window.matchMedia("(hover: none)").matches;
 
     let width, height;
     let particles = [];
 
-    // Mouse state
+    // Mouse state (Starts off-screen)
     const mouse = { x: -1000, y: -1000 };
 
     class Particle {
       constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-
-        // Random drift velocity (Very slow)
+        this.x = Math.random() * window.innerWidth;
+        this.y = Math.random() * window.innerHeight;
         this.vx = (Math.random() - 0.5) * 0.5;
         this.vy = (Math.random() - 0.5) * 0.5;
-
         this.char = CHARS[Math.floor(Math.random() * CHARS.length)];
-        this.size = Math.random() * 0.5 + 0.5; // Random opacity/size multiplier
+        this.size = Math.random() * 0.5 + 0.5;
       }
 
       update() {
         this.x += this.vx;
         this.y += this.vy;
 
-        // Wrap around screen edges (Teleport to other side)
         if (this.x < 0) this.x = width;
         if (this.x > width) this.x = 0;
         if (this.y < 0) this.y = height;
@@ -47,24 +48,28 @@ const FloatingASCII = () => {
       }
 
       draw() {
-        // Calculate distance to mouse
-        const dx = this.x - mouse.x;
-        const dy = this.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        // Only calculate distance if we are on Desktop
+        let isHovered = false;
 
-        // INTERACTION:
-        // If mouse is close, be bright and scramble character
-        // If far, be dim and static
-        if (dist < MOUSE_DIST) {
-          ctx.fillStyle = "#ffffff"; // Bright White
+        if (!isMobile) {
+          const dx = this.x - mouse.x;
+          const dy = this.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          isHovered = dist < MOUSE_DIST;
+        }
+
+        // RENDER LOGIC
+        if (isHovered) {
+          // DESKTOP INTERACTION: Bright White & Scrambling
+          ctx.fillStyle = "#ffffff";
           ctx.font = `bold ${FONT_SIZE + 2}px 'Geist Mono', monospace`;
 
-          // Scramble effect: Randomly change character when hovered
+          // Scramble character occasionally
           if (Math.random() > 0.8) {
             this.char = CHARS[Math.floor(Math.random() * CHARS.length)];
           }
         } else {
-          // Dim color based on particle's random size attribute
+          // MOBILE / IDLE: Dim Green & Static
           ctx.fillStyle = `rgba(34, 197, 94, ${this.size * 0.4})`; // Low opacity green
           ctx.font = `${FONT_SIZE}px 'Geist Mono', monospace`;
         }
@@ -77,15 +82,15 @@ const FloatingASCII = () => {
       width = window.innerWidth;
       height = window.innerHeight;
 
-      // High DPI scaling
       const dpr = window.devicePixelRatio || 1;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
+      // Important: Scale CSS to match window, but canvas pixels to match DPI
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
+
       ctx.scale(dpr, dpr);
 
-      // Create particles
       particles = [];
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         particles.push(new Particle());
@@ -93,18 +98,18 @@ const FloatingASCII = () => {
     };
 
     const animate = () => {
-      // Clear canvas (No trails for this version, looks cleaner)
       ctx.clearRect(0, 0, width, height);
-
       particles.forEach((p) => {
         p.update();
         p.draw();
       });
-
       requestAnimationFrame(animate);
     };
 
     const handleMouseMove = (e) => {
+      // Don't waste CPU calculating mouse position on mobile
+      if (isMobile) return;
+
       const rect = canvas.getBoundingClientRect();
       mouse.x = e.clientX - rect.left;
       mouse.y = e.clientY - rect.top;
@@ -114,7 +119,6 @@ const FloatingASCII = () => {
       init();
     };
 
-    // Run
     init();
     window.addEventListener("resize", handleResize);
     window.addEventListener("mousemove", handleMouseMove);

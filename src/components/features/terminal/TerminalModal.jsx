@@ -2,33 +2,25 @@
 
 import React, { useEffect, useState } from "react";
 import { FiX, FiMaximize2, FiWifi } from "react-icons/fi";
+import useSystemSound from "@/hooks/useSystemSound";
 import Terminal from "./Terminal";
 import Leo from "./Leo";
 
 const TerminalModal = ({ isOpen, onClose, musicState }) => {
   const [isRendered, setIsRendered] = useState(false);
-
-  const playSound = (type) => {
-    const audio = new Audio(
-      type === "open"
-        ? "/songs/terminal-open.wav"
-        : "/songs/terminal-close.wav",
-    );
-    audio.volume = 0.5; // Lower volume for subtlety
-    audio.play().catch((e) => console.error("Audio failed:", e));
-  };
+  const { playSound } = useSystemSound();
 
   useEffect(() => {
     if (isOpen) {
       setIsRendered(true);
-      playSound("open");
+      playSound("terminalopen");
     } else {
       setTimeout(() => setIsRendered(false), 300);
     }
   }, [isOpen]);
 
   const handleClose = () => {
-    playSound("close");
+    playSound("terminalclose");
     onClose();
   };
 

@@ -9,6 +9,7 @@ import {
   FiFileText,
 } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
+import useSystemSound from "../../hooks/useSystemSound";
 
 const DOCK_LINKS = [
   { icon: FiFileText, href: "/resume.pdf", label: "Resume" },
@@ -37,26 +38,25 @@ const PLAYLIST = [
 ];
 
 const Dock = ({ onTerminalClick }) => {
+  const { playSound } = useSystemSound();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const audioRef = useRef(null);
   const [time, setTime] = useState(new Date());
   const [bouncing, setBouncing] = useState(false);
 
-  const playHover = () => {
-    const audio = new Audio("/songs/dockhover.mp3");
-    audio.volume = 0.2;
-    audio.playbackRate = 2;
-    audio.play().catch((e) => {
-      // Write it later
-    });
-  };
+  // 👇 NEW: Controls the visibility of the "Play Music" hint
+  const [showHint, setShowHint] = useState(false);
 
+  // Clock Timer
   useEffect(() => {
+    // Avoid hydration mismatch by updating time only on client
+    setTime(new Date());
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  // Bounce Animation Timer
   useEffect(() => {
     const interval = setInterval(() => {
       setBouncing(true);
@@ -65,25 +65,13 @@ const Dock = ({ onTerminalClick }) => {
     return () => clearInterval(interval);
   }, []);
 
+  // 👇 CHANGED: Removed auto-play logic. Just load the file.
   useEffect(() => {
     audioRef.current = new Audio(PLAYLIST[0].src);
     audioRef.current.loop = true;
     audioRef.current.volume = 0.05;
 
-    const attemptPlay = async () => {
-      try {
-        await audioRef.current.play();
-        setIsPlaying(true);
-      } catch (error) {
-        const enableAudio = () => {
-          audioRef.current.play();
-          setIsPlaying(true);
-          document.removeEventListener("click", enableAudio);
-        };
-        document.addEventListener("click", enableAudio);
-      }
-    };
-    attemptPlay();
+    // No attemptPlay() here. Silent by default.
 
     return () => {
       if (audioRef.current) {
@@ -93,15 +81,45 @@ const Dock = ({ onTerminalClick }) => {
     };
   }, []);
 
+  // 👇 NEW: The "Gentle Nudge" Timer Logic
+  useEffect(() => {
+    // 1. Wait 2 seconds before showing the hint
+    const startTimer = setTimeout(() => {
+      setShowHint(true);
+    }, 2000);
+
+    // 2. Hide it automatically after 8 seconds (so it doesn't get annoying)
+    const hideTimer = setTimeout(() => {
+      setShowHint(false);
+    }, 8000);
+
+    return () => {
+      clearTimeout(startTimer);
+      clearTimeout(hideTimer);
+    };
+  }, []);
+
   const togglePlay = () => {
     if (!audioRef.current) return;
-    if (isPlaying) audioRef.current.pause();
-    else audioRef.current.play();
+
+    // Add feedback sound
+    playSound("click");
+
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+      setShowHint(false); // Hide hint immediately if they play
+    }
     setIsPlaying(!isPlaying);
   };
 
   const playNext = (e) => {
     e.stopPropagation();
+
+    // Add feedback sound
+    playSound("click");
+
     if (!audioRef.current) return;
     const nextIndex = (currentTrackIndex + 1) % PLAYLIST.length;
     setCurrentTrackIndex(nextIndex);
@@ -113,10 +131,22 @@ const Dock = ({ onTerminalClick }) => {
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
       <div className="flex items-center gap-3 px-5 h-14 rounded-full bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50 transition-all duration-300 hover:border-white/20 hover:scale-[1.02]">
+        {/* MUSIC BUTTON WRAPPER */}
         <div className="group relative flex items-center justify-center">
+          {/* 👇 THE NEW TOOLTIP COMPONENT */}
+          <div
+            className={`absolute bottom-full mb-3 px-3 py-1.5 rounded-lg bg-[#222] border border-white/10 text-[10px] text-green-400 font-mono tracking-wide whitespace-nowrap shadow-xl transition-all duration-700 transform pointer-events-none z-50
+            ${showHint && !isPlaying ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}
+            `}
+          >
+            Click to play radio 🎵
+            {/* Little triangle arrow pointing down */}
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#222] border-b border-r border-white/10 rotate-45"></div>
+          </div>
+
           <button
             onClick={togglePlay}
-            onMouseEnter={playHover} // 🔊 ADDED HERE
+            onMouseEnter={() => playSound("dock")}
             className={`relative w-9 h-9 rounded-full border border-white/10 flex items-center justify-center transition-all duration-700 overflow-hidden ${isPlaying ? "border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.3)]" : "hover:border-white/40"}`}
           >
             <div
@@ -128,6 +158,7 @@ const Dock = ({ onTerminalClick }) => {
             </div>
           </button>
 
+          {/* NOW PLAYING POPUP (Original) */}
           <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 pb-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
             <div className="w-40 bg-[#111] border border-white/10 rounded-lg p-3 shadow-2xl relative">
               <div className="flex items-center justify-between mb-2">
@@ -136,7 +167,7 @@ const Dock = ({ onTerminalClick }) => {
                 </span>
                 <button
                   onClick={playNext}
-                  onMouseEnter={playHover}
+                  onMouseEnter={() => playSound("dock")}
                   className="hover:text-white text-gray-400 transition-colors p-1 hover:bg-white/10 rounded"
                 >
                   <FiSkipForward size={12} />
@@ -158,7 +189,7 @@ const Dock = ({ onTerminalClick }) => {
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            onMouseEnter={playHover} // 🔊 ADDED HERE
+            onMouseEnter={() => playSound("dock")}
             className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 active:scale-90"
           >
             <link.icon size={18} />
@@ -167,7 +198,7 @@ const Dock = ({ onTerminalClick }) => {
 
         <button
           onClick={onTerminalClick}
-          onMouseEnter={playHover} // 🔊 ADDED HERE
+          onMouseEnter={() => playSound("dock")}
           className={`p-2 rounded-full hover:bg-white/10 transition-all duration-300 active:scale-90 ${
             bouncing
               ? "animate-bounce text-green-400"
