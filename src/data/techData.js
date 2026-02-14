@@ -1,0 +1,80 @@
+export const TECH_DATA = {
+  core: [
+    { name: "HTML5", icon: "https://cdn.simpleicons.org/html5" },
+    { name: "CSS", icon: "https://cdn.simpleicons.org/css" },
+    { name: "JavaScript", icon: "https://cdn.simpleicons.org/javascript" },
+    { name: "TypeScript", icon: "https://cdn.simpleicons.org/typescript" },
+    { name: "React", icon: "https://cdn.simpleicons.org/react" },
+    { name: "Next.js", icon: "https://cdn.simpleicons.org/nextdotjs" },
+    { name: "shadcn/ui", icon: "https://cdn.simpleicons.org/shadcnui" },
+    { name: "Node.js", icon: "https://cdn.simpleicons.org/nodedotjs" },
+    { name: "Express", icon: "https://cdn.simpleicons.org/express" },
+    { name: "MongoDB", icon: "https://cdn.simpleicons.org/mongodb" },
+    { name: "PostgreSQL", icon: "https://cdn.simpleicons.org/postgresql" },
+    { name: "Prisma", icon: "https://cdn.simpleicons.org/prisma" },
+    { name: "Git", icon: "https://cdn.simpleicons.org/git" },
+    { name: "GitHub", icon: "https://cdn.simpleicons.org/github" },
+    { name: "Docker", icon: "https://cdn.simpleicons.org/docker" },
+    { name: "Linux", icon: "https://cdn.simpleicons.org/linux" },
+    { name: "Clerk", icon: "https://cdn.simpleicons.org/clerk" },
+    { name: "Claude", icon: "https://cdn.simpleicons.org/claude" },
+    { name: "Curl", icon: "https://cdn.simpleicons.org/curl" },
+    { name: "Bash", icon: "https://cdn.simpleicons.org/gnubash" },
+    { name: "Auth0", icon: "https://cdn.simpleicons.org/auth0" },
+    { name: "Vercel", icon: "https://cdn.simpleicons.org/vercel" },
+  ],
+  // For Full List View
+  full: [
+    {
+      category: "Languages",
+      items: [
+        { name: "Go", icon: "GO" },
+        { name: "Python", icon: "PY" },
+        { name: "TypeScript", icon: "TS" },
+        { name: "JavaScript", icon: "JS" },
+        { name: "C++", icon: "C++" },
+      ],
+    },
+    {
+      category: "Frontend",
+      items: [
+        { name: "React", icon: "⚛️" },
+        { name: "Next.js", icon: "N" },
+        { name: "Tailwind CSS", icon: "TW" },
+        { name: "Shadcn UI", icon: "//" },
+        { name: "Framer Motion", icon: "FM" },
+      ],
+    },
+    {
+      category: "Backend & DB",
+      items: [
+        { name: "FastAPI", icon: "⚡" },
+        { name: "Node.js", icon: "JS" },
+        { name: "PostgreSQL", icon: "PG" },
+        { name: "MongoDB", icon: "🍃" },
+        { name: "Redis", icon: "🔴" },
+        { name: "Firebase", icon: "🔥" },
+      ],
+    },
+    {
+      category: "Infra & Tools",
+      items: [
+        { name: "Docker", icon: "🐳" },
+        { name: "Google Cloud", icon: "☁️" },
+        { name: "Vercel", icon: "▲" },
+        { name: "Git", icon: "G" },
+        { name: "GitHub", icon: "GH" },
+        { name: "Linux", icon: "🐧" },
+        { name: "Nginx", icon: "N" },
+      ],
+    },
+    {
+      category: "AI & ML",
+      items: [
+        { name: "Hugging Face", icon: "🤗" },
+        { name: "PyTorch", icon: "🔥" },
+        { name: "Pandas", icon: "🐼" },
+      ],
+    },
+  ],
+};
