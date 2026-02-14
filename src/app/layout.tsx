@@ -35,6 +35,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Ayan Kumar | Full-Stack Developer",
   description: "Welcome to my Portfolio",
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

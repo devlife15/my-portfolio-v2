@@ -1,9 +1,6 @@
-import React from "react";
 import { FiPlay, FiHeadphones } from "react-icons/fi";
-import useSystemSound from "../../../hooks/useSystemSound";
 
-const PodcastCard = ({ title, show, episode, image, link }) => {
-  const { playSound } = useSystemSound();
+const PodcastCard = ({ title, show, episode, image, link, playSound }) => {
   return (
     <a
       href={link}
@@ -11,6 +8,7 @@ const PodcastCard = ({ title, show, episode, image, link }) => {
       rel="noreferrer"
       className="group flex flex-col gap-3 w-full cursor-pointer"
       onMouseEnter={() => playSound("hover")}
+      onClick={() => playSound("click")}
     >
       <div className="relative w-full aspect-square bg-[#111] border border-white/5 rounded-sm overflow-hidden">
         <img

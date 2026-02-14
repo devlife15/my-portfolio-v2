@@ -1,6 +1,8 @@
 import ProjectCard from "./project/ProjectCard";
+import useSystemSound from "../../hooks/useSystemSound";
 
 const ProjectSection = ({ ref }) => {
+  const { playSound } = useSystemSound();
   return (
     <section ref={ref} className="flex flex-col gap-8">
       <h2 className="font-editorial text-[22px] text-[#EEEEEE] italic mb-2">
@@ -14,6 +16,7 @@ const ProjectSection = ({ ref }) => {
             description={"An AI SAAS Customer Agent"}
             year={"2026"}
             src={"/projects/1.jpg"}
+            playSound={playSound}
           />
         </div>
         <div className="project-card" style={{ opacity: 0 }}>
@@ -22,6 +25,7 @@ const ProjectSection = ({ ref }) => {
             description={"Description Placeholder"}
             year={"2025"}
             src={"/projects/2.jpg"}
+            playSound={playSound}
           />
         </div>
         <div className="project-card" style={{ opacity: 0 }}>
@@ -30,6 +34,7 @@ const ProjectSection = ({ ref }) => {
             description={"Description placeholder"}
             year={"2025"}
             src={"/projects/3.jpg"}
+            playSound={playSound}
           />
         </div>
       </div>

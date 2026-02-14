@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FiArrowUpRight, FiBriefcase, FiCalendar } from "react-icons/fi";
-import useSystemSound from "../../../hooks/useSystemSound";
 
 const WORK_DATA = [
   {
@@ -32,8 +31,7 @@ const WORK_DATA = [
   },
 ];
 
-const WorkExperience = () => {
-  const { playSound } = useSystemSound();
+const WorkExperience = ({ playSound }) => {
   const [hoveredId, setHoveredId] = useState(null);
 
   return (
