@@ -30,8 +30,10 @@ const TechIcon = ({ icon, name }) => (
 const TechStack = () => {
   return (
     <div className="w-full">
-      <div className="mb-4">
-        <p className="text-gray-400 text-lg max-w-2xl leading-relaxed font-editorial italic">
+      <div>
+        {" "}
+        {/* deleted classname mb-4 */}
+        <p className="text-gray-400 text-lg leading-relaxed font-editorial italic">
           While I like experimenting with many tools, this stack represents
           where my strongest experience lies:
         </p>

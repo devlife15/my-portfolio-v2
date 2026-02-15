@@ -1,146 +1,178 @@
+"use client";
+
 import { useState } from "react";
-import { FiArrowUpRight, FiBriefcase, FiCalendar } from "react-icons/fi";
+import {
+  FiFolder,
+  FiFileText,
+  FiChevronRight,
+  FiChevronDown,
+  FiGitCommit,
+} from "react-icons/fi";
 
 const WORK_DATA = [
   {
-    id: 1,
+    id: "freelance",
     company: "Freelance Client",
     role: "Full Stack Developer",
     period: "Nov 2025 - Present",
+    isCurrent: true,
     description: [
-      "Architecting a dual-system solution (HRMS & SCM) for a water plant business using Next.js and Node.js.",
-      "Designing a scalable PostgreSQL database schema to handle inventory tracking and employee payroll.",
-      "Deploying infrastructure on AWS with Docker for containerization and CI/CD pipelines.",
+      "Architected dual-system solution (HRMS & SCM) using Next.js/Node.",
+      "Designed scalable PostgreSQL schema for inventory tracking.",
+      "Deployed AWS/Docker infrastructure for CI/CD pipelines.",
     ],
     tags: ["Next.js", "Node.js", "PostgreSQL", "AWS"],
-    link: "#",
-    isCurrent: true,
   },
   {
-    id: 2,
-    company: "JPMorgan Chase & Co., Bengaluru",
+    id: "jpmc",
+    company: "JPMorgan Chase & Co.",
     role: "Software Engineer I",
     period: "Future",
+    isCurrent: false,
     description: [
-      "Contributing to the core platform team...",
-      "Optimized API response times by 40%...",
+      "Contributing to the core platform team optimization efforts.",
+      "Targeting 40% improvement in API response times.",
     ],
     tags: ["React", "Go", "Kubernetes", "Spring"],
-    link: "#",
-    isCurrent: false,
   },
 ];
 
 const WorkExperience = ({ playSound }) => {
-  const [hoveredId, setHoveredId] = useState(null);
+  // Allow multiple folders to be open? Or just one? Let's do just one for focus.
+  const [openNode, setOpenNode] = useState("freelance");
+
+  const toggleNode = (id) => {
+    playSound("click");
+    setOpenNode(openNode === id ? null : id);
+  };
 
   return (
-    <section className="flex flex-col gap-10">
-      <h2 className="font-editorial text-[24px] text-[#EEEEEE] italic">
-        Experience
-      </h2>
+    <div className="max-w-3xl mx-auto">
+      {/* COMMAND PROMPT HEADER */}
+      {/* <div className="font-mono text-sm mb-8 pb-4 border-b border-white/10">
+        <span className="text-green-500">➜</span>{" "}
+        <span className="text-blue-400">~</span>{" "}
+        <span className="text-gray-400">tree</span>{" "}
+        <span className="text-white">./experience</span>
+      </div> */}
 
-      <div className="relative border-l border-white/10 ml-3 md:ml-6 space-y-12">
-        {WORK_DATA.map((job) => {
-          // --- THE FIX ---
-          // It is active if:
-          // 1. Mouse is explicitly over THIS item (hoveredId === job.id)
-          // 2. OR Mouse is NOT over anything (hoveredId === null) AND this is the current job
-          const isActive =
-            hoveredId === job.id || (hoveredId === null && job.isCurrent);
+      {/* THE TREE STRUCTURE */}
+      <div className="font-mono text-sm md:text-base pl-2">
+        {/* Root Directory */}
+        <div className="flex items-center gap-2 text-blue-400 mb-4">
+          <FiFolder className="fill-blue-500/20" />
+          <span>.</span>
+        </div>
 
-          return (
-            <div
-              key={job.id}
-              className="group relative pl-8 md:pl-12"
-              onMouseEnter={() => {
-                setHoveredId(job.id);
-                playSound("hover");
-              }}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              {/* --- TIMELINE DOT --- */}
-              <div
-                className={`absolute -left-1.25 top-2 w-2.5 h-2.5 rounded-full border transition-all duration-300 ${
-                  isActive
-                    ? "bg-green-500 animate-pulse border-green-500 shadow-[0_0_10px_rgba(34,197,94,0.6)] scale-125"
-                    : "bg-[#111] border-white/20"
-                }`}
-              ></div>
+        {/* Dynamic Folders */}
+        <div className="flex flex-col gap-1">
+          {WORK_DATA.map((job, index) => {
+            const isOpen = openNode === job.id;
+            const isLast = index === WORK_DATA.length - 1;
 
-              {/* --- CONTENT CARD --- */}
-              <div
-                className={`relative p-6 rounded-lg border transition-all duration-500 cursor-default ${
-                  hoveredId === job.id
-                    ? "bg-white/2 border-white/10 translate-x-2"
-                    : "bg-transparent border-transparent"
-                }`}
-              >
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+            return (
+              <div key={job.id} className="relative">
+                {/* TREE LINES (Vertical Guide) */}
+                {!isLast && (
+                  <div className="absolute left-2.75 top-8 bottom-0 w-px bg-white/10"></div>
+                )}
+
+                {/* FOLDER ROW (The Clickable Job Title) */}
+                <button
+                  onClick={() => toggleNode(job.id)}
+                  onMouseEnter={() => playSound("hover")}
+                  className="group flex items-center gap-3 w-full hover:bg-white/5 py-1 pr-4 rounded transition-colors text-left"
+                >
+                  {/* Tree Branch Icon */}
+                  <span className="text-gray-600 ml-0.5">
+                    {isLast ? "└──" : "├──"}
+                  </span>
+
+                  {/* Icon */}
+                  <div
+                    className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
+                  >
+                    {isOpen ? (
+                      <FiChevronDown className="text-green-500" />
+                    ) : (
+                      <FiChevronRight className="text-gray-500" />
+                    )}
+                  </div>
+
+                  {/* Job Content */}
                   <div>
-                    <h3
-                      className={`text-lg font-editorial font-bold transition-colors duration-300 italic ${
-                        isActive ? "text-green-400" : "text-white"
-                      }`}
+                    <span
+                      className={`font-bold ${isOpen ? "text-green-400" : "text-gray-300 group-hover:text-white"}`}
                     >
-                      {job.role}
-                    </h3>
-                    <div className="text-sm text-gray-400 flex items-center gap-2 mt-1">
-                      <span className="font-bold font-sans text-gray-300">
-                        {job.company}
-                      </span>
-                      {job.link !== "#" && (
-                        <a
-                          href={job.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:text-white transition-colors"
-                        >
-                          <FiArrowUpRight />
-                        </a>
-                      )}
+                      {job.company}
+                    </span>
+                    <span className="text-gray-600 text-xs ml-3">
+                      // {job.role}
+                    </span>
+                  </div>
+                </button>
+
+                {/* EXPANDED CONTENT (The "Files" inside) */}
+                <div
+                  className={`
+                    grid transition-all duration-300 ease-in-out
+                    ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}
+                  `}
+                >
+                  <div className="overflow-hidden">
+                    {/* Indent content to align with tree */}
+                    <div
+                      className={`ml-8 ${isLast ? "border-l-0" : "border-l border-white/10"} pl-6 py-4 space-y-4`}
+                    >
+                      {/* Metadata File */}
+                      <div className="flex items-center gap-2 text-gray-500 text-xs mb-2">
+                        <FiFileText size={12} />
+                        <span>metadata.json</span>
+                        <span className="text-gray-700">-- {job.period}</span>
+                      </div>
+
+                      {/* Description "Code" */}
+                      <div className="space-y-2">
+                        {job.description.map((desc, i) => (
+                          <div
+                            key={i}
+                            className="flex gap-3 text-gray-400 text-sm leading-relaxed hover:text-gray-200 transition-colors"
+                          >
+                            <span className="text-green-500/50 mt-1">
+                              <FiGitCommit size={14} />
+                            </span>
+                            {desc}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Stack Tags */}
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {job.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] px-2 py-0.5 bg-white/5 border border-white/10 text-gray-400 rounded"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2 text-xs font-mono text-gray-500 bg-white/5 px-2 py-1 rounded border border-white/5 w-fit">
-                    <FiCalendar size={12} />
-                    {job.period}
-                  </div>
-                </div>
-
-                {/* Description List */}
-                <ul className="space-y-2 mb-6">
-                  {job.description.map((item, i) => (
-                    <li
-                      key={i}
-                      className="flex items-start gap-3 text-sm text-[#888] leading-relaxed"
-                    >
-                      <span className="mt-1.5 w-1 h-1 rounded-full bg-green-500/50 shrink-0"></span>
-                      <span className="group-hover:text-gray-400 transition-colors duration-300">
-                        {item}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Tech Stack Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {job.tags.map((tech, i) => (
-                    <span
-                      key={i}
-                      className="px-2.5 py-1 text-[10px] font-mono text-green-400/80 bg-green-500/5 border border-green-500/10 rounded hover:bg-green-500/10 transition-colors"
-                    >
-                      {tech}
-                    </span>
-                  ))}
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        {/* Footer Summary */}
+        <div className="mt-6 text-gray-600 text-xs pl-1">
+          <span className="text-green-500">2 directories</span>,{" "}
+          {WORK_DATA.reduce((acc, job) => acc + job.description.length, 0)}{" "}
+          files
+        </div>
       </div>
-    </section>
+    </div>
   );
 };
 

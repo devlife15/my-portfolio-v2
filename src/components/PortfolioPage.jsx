@@ -159,7 +159,7 @@ const PortfolioPage = () => {
             musicState={{ isPlaying, togglePlay, nextTrack }}
           />
 
-          <div className="relative z-10 max-w-150 mx-auto px-6 py-24 md:py-32 flex flex-col gap-15">
+          <div className="relative z-10 max-w-160 mx-auto px-6 py-24 md:py-32 flex flex-col gap-15">
             <HeroSection ref={headerRef} aboutRef={aboutRef} />
             <WorkExpSection ref={experienceRef} />
             <ProjectSection ref={projectsSectionRef} />

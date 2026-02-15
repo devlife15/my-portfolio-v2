@@ -13,7 +13,7 @@ const GithubStats = ({ username }) => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center py-8">
+    <div className="w-full flex flex-col items-center justify-center pt-8">
       {/* 1. [mask-image]: Creates the fade effect on left & right edges.
          2. overflow-x-auto: Allows scrolling if the graph is too wide.
          3. no-scrollbar: Hides the scrollbar for a cleaner look.
