@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 const ProjectCard = ({ title, description, year, src, playSound }) => {
@@ -34,11 +36,11 @@ const ProjectCard = ({ title, description, year, src, playSound }) => {
           <h3 className="font-editorial text-[18px] italic text-[#EEEEEE] group-hover:text-white transition-colors">
             {title}
           </h3>
-          <p className="font-sans text-[14px] text-[#888888] line-clamp-2">
+          <p className="font-saans text-[14px] text-[#888888] line-clamp-2">
             {description}
           </p>
         </div>
-        <span className="font-mono text-[12px] text-[#444444] mt-1.5 shrink-0">
+        <span className="font-saansmono text-[12px] text-[#444444] mt-1.5 shrink-0">
           {year}
         </span>
       </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import GithubStats from "./project/GithubStats";
 
 const GithubSection = ({ ref }) => {

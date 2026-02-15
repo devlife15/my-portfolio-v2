@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import LibraryRow from "./library/LibraryRow";
 
 const BooksSection = ({ ref }) => {

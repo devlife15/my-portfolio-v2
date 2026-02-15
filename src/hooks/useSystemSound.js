@@ -1,3 +1,5 @@
+"use cient";
+
 import { useCallback, useEffect, useRef } from "react";
 
 const useSystemSound = () => {
@@ -9,7 +11,7 @@ const useSystemSound = () => {
     const soundFiles = {
       hover: "/songs/hover.mp3",
       click: "/songs/click2.mp3",
-      open: "/songs/open.ogg",
+      toggle: "/songs/toggle.mp3",
       dock: "/songs/dockhover.mp3",
       startup: "/songs/startup.mp3",
       terminalopen: "/songs/terminal-open.wav",
@@ -66,6 +68,9 @@ const useSystemSound = () => {
         volume = 0.5;
         break;
       case "terminalclose":
+        volume = 0.5;
+        break;
+      case "toggle":
         volume = 0.5;
         break;
     }

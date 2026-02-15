@@ -42,7 +42,7 @@ const WorkExperience = ({ playSound }) => {
   const [openNode, setOpenNode] = useState("freelance");
 
   const toggleNode = (id) => {
-    playSound("click");
+    playSound("toggle");
     setOpenNode(openNode === id ? null : id);
   };
 
@@ -102,11 +102,11 @@ const WorkExperience = ({ playSound }) => {
                   {/* Job Content */}
                   <div>
                     <span
-                      className={`font-bold ${isOpen ? "text-green-400" : "text-gray-300 group-hover:text-white"}`}
+                      className={`font-bold font-saans ${isOpen ? "text-green-400" : "text-gray-300 group-hover:text-white"}`}
                     >
                       {job.company}
                     </span>
-                    <span className="text-gray-600 text-xs ml-3">
+                    <span className="text-gray-600 text-xs font-saansmono ml-3">
                       // {job.role}
                     </span>
                   </div>
@@ -127,8 +127,10 @@ const WorkExperience = ({ playSound }) => {
                       {/* Metadata File */}
                       <div className="flex items-center gap-2 text-gray-500 text-xs mb-2">
                         <FiFileText size={12} />
-                        <span>metadata.json</span>
-                        <span className="text-gray-700">-- {job.period}</span>
+                        <span className="font-saansmono">metadata.json</span>
+                        <span className="text-gray-700 font-saansmono">
+                          -- {job.period}
+                        </span>
                       </div>
 
                       {/* Description "Code" */}
@@ -136,7 +138,7 @@ const WorkExperience = ({ playSound }) => {
                         {job.description.map((desc, i) => (
                           <div
                             key={i}
-                            className="flex gap-3 text-gray-400 text-sm leading-relaxed hover:text-gray-200 transition-colors"
+                            className="flex font-saans gap-3 text-gray-400 text-sm leading-relaxed hover:text-gray-200 transition-colors"
                           >
                             <span className="text-green-500/50 mt-1">
                               <FiGitCommit size={14} />
@@ -151,7 +153,7 @@ const WorkExperience = ({ playSound }) => {
                         {job.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="text-[10px] px-2 py-0.5 bg-white/5 border border-white/10 text-gray-400 rounded"
+                            className="text-[10px] font-saansmono px-2 py-0.5 bg-white/5 border border-white/10 text-gray-400 rounded"
                           >
                             {tag}
                           </span>
@@ -166,7 +168,7 @@ const WorkExperience = ({ playSound }) => {
         </div>
 
         {/* Footer Summary */}
-        <div className="mt-6 text-gray-600 text-xs pl-1">
+        <div className="mt-6 text-gray-600 text-xs pl-1 font-saansmono">
           <span className="text-green-500">2 directories</span>,{" "}
           {WORK_DATA.reduce((acc, job) => acc + job.description.length, 0)}{" "}
           files

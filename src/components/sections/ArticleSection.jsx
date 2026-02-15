@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import BookmarkCard from "./library/BookmarkCard";
 
 const ArticleSection = ({ ref }) => {

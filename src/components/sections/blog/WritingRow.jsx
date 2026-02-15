@@ -16,7 +16,7 @@ const WritingRow = ({ title, date, link }) => {
       onClick={() => playSound("click")}
     >
       <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-6 w-full">
-        <span className="font-mono text-xs text-[#444444] shrink-0 w-24">
+        <span className="font-saansmono text-xs text-[#444444] shrink-0 w-24">
           {date}
         </span>
 

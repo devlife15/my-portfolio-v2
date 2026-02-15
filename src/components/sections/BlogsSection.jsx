@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import WritingRow from "./blog/WritingRow";
 import { FiArrowRight } from "react-icons/fi";
 
@@ -39,7 +39,7 @@ const BlogsSection = ({ ref }) => {
 
       <a
         href="/blog"
-        className="group inline-flex items-center gap-2 text-xs font-mono text-[#666666] hover:text-white transition-colors"
+        className="group inline-flex items-center gap-2 text-xs font-saansmono text-[#666666] hover:text-white transition-colors"
       >
         <span>read all posts</span>
         <FiArrowRight className="group-hover:translate-x-1 transition-transform duration-300" />

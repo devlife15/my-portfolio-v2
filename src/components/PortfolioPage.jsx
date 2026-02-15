@@ -72,18 +72,18 @@ const PortfolioPage = () => {
         // We attach this directly to the timeline.
         // It will NOT start until Step 2 finishes.
         .fromTo(
-          experienceRef.current?.querySelectorAll(".work-card") || [],
+          experienceRef.current,
           { opacity: 0, y: 50 },
           {
             opacity: 1,
             y: 0,
             duration: 0.8,
-            stagger: 0.2,
             ease: "power3.out",
-            force3D: true, // Keep the GPU fix!
-            // 🚨 Notice: No scrollTrigger here! The timeline controls the timing now.
+            // If you want the title and card to stagger slightly,
+            // you can animate 'experienceRef.current.children' instead,
+            // but animating the parent is the safest fix for your current setup.
           },
-          "-=0.1", // Starts 0.1s before the text finishes (smooth handoff)
+          "-=0.1", // Overlap slightly with previous animation
         );
 
       // --- REMAINING SECTIONS (Keep these on ScrollTrigger) ---
@@ -159,7 +159,7 @@ const PortfolioPage = () => {
             musicState={{ isPlaying, togglePlay, nextTrack }}
           />
 
-          <div className="relative z-10 max-w-160 mx-auto px-6 py-24 md:py-32 flex flex-col gap-15">
+          <div className="relative z-10 max-w-150 mx-auto px-6 py-24 md:py-32 flex flex-col gap-15">
             <HeroSection ref={headerRef} aboutRef={aboutRef} />
             <WorkExpSection ref={experienceRef} />
             <ProjectSection ref={projectsSectionRef} />

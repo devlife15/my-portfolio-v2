@@ -1,3 +1,5 @@
+"use client";
+
 import {
   SiNextdotjs,
   SiTailwindcss,
@@ -46,14 +48,14 @@ const FooterSection = ({ ref }) => {
       style={{ opacity: 0 }}
     >
       {/* LEFT SIDE */}
-      <div className="flex flex-col gap-1 text-center md:text-left">
+      <div className="flex flex-col gap-1 text-center md:text-left font-sans">
         <span className="text-[#EEEEEE]">© 2026 Ayan</span>
         <span className="text-[10px] opacity-60">Crafted with care & code</span>
       </div>
 
       {/* RIGHT SIDE: Tech Stack */}
       <div className="flex flex-col items-center md:items-end gap-3">
-        <span>Built with</span>
+        <span className="font-sans">Built with</span>
 
         <div className="flex items-center gap-4">
           {TECH_STACK.map((tech, index) => (

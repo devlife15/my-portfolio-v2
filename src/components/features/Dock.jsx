@@ -162,7 +162,7 @@ const Dock = ({ onTerminalClick }) => {
           <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 pb-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
             <div className="w-40 bg-[#111] border border-white/10 rounded-lg p-3 shadow-2xl relative">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[9px] uppercase tracking-widest text-green-400 font-sans font-bold">
+                <span className="text-[9px] uppercase tracking-widest text-green-400 font-saans font-bold">
                   Now Playing
                 </span>
                 <button

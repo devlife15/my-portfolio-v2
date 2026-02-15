@@ -1,3 +1,5 @@
+"use client";
+
 import ScrambleText from "../effects/ScrambleText";
 import Tagline from "./about/Tagline";
 
@@ -38,7 +40,7 @@ const HeroSection = ({ ref, aboutRef }) => {
       </div>
       <div
         ref={aboutRef}
-        className="font-sans text-[16px] leading-[1.6] space-y-5 text-[#999999]"
+        className="font-saans text-[16px] leading-[1.6] space-y-5 text-[#999999]"
       >
         <p>I'm a full-stack engineer based in Kolkata, India.</p>
         <p>

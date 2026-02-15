@@ -57,7 +57,7 @@ const LibraryRow = ({ title, author, status, rating, cover, link }) => {
           <h3 className="font-editorial italic text-[16px] md:text-[18px] text-[#DDDDDD] group-hover:text-white transition-colors">
             {title}
           </h3>
-          <span className="font-sans text-xs text-[#666666] group-hover:text-[#888888] transition-colors">
+          <span className="font-saans text-xs text-[#666666] group-hover:text-[#888888] transition-colors">
             by {author}
           </span>
         </div>
@@ -67,7 +67,7 @@ const LibraryRow = ({ title, author, status, rating, cover, link }) => {
       <div className="flex flex-col items-end gap-2">
         {/* Status Badge */}
         <div
-          className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] uppercase font-sans font-bold tracking-wider ${getStatusStyle()}`}
+          className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] uppercase font-saans font-bold tracking-wider ${getStatusStyle()}`}
         >
           {getStatusIcon()}
           <span>{status}</span>

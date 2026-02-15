@@ -89,7 +89,7 @@ const BlogPost = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[#EEEEEE] font-sans selection:bg-green-500/30 selection:text-white pb-32">
+    <div className="min-h-screen bg-black text-[#EEEEEE] font-saans selection:bg-green-500/30 selection:text-white pb-32">
       {/* 1. PROGRESS BAR (Sticky Top) */}
       <div className="fixed top-0 left-0 h-1 bg-green-500/20 w-full z-50">
         <div

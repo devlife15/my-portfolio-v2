@@ -15,7 +15,7 @@ const BookmarkCard = ({ title, source, link }) => {
     >
       {/* Top Row: Source & Icon */}
       <div className="flex justify-between items-start mb-4">
-        <span className="font-mono text-[10px] text-[#555555] uppercase tracking-wider border border-white/10 px-2 py-1 rounded-full group-hover:text-[#888888] group-hover:border-white/20 transition-colors">
+        <span className="font-saansmono text-[10px] text-[#555555] uppercase tracking-wider border border-white/10 px-2 py-1 rounded-full group-hover:text-[#888888] group-hover:border-white/20 transition-colors">
           {source}
         </span>
         <FiArrowUpRight className="text-white/20 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300" />

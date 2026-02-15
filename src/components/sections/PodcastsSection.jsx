@@ -1,3 +1,5 @@
+"use client";
+
 import PodcastCard from "./library/PodcastCard";
 import useSystemSound from "@/hooks/useSystemSound";
 

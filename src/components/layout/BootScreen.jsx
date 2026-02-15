@@ -44,7 +44,7 @@ const BootScreen = ({ onEnter }) => {
           <h1 className="font-editorial text-4xl md:text-5xl italic text-[#EEEEEE] tracking-wide leading-tight">
             Welcome
           </h1>
-          <span className="font-sans text-[10px] text-green-500/80 tracking-[0.3em] uppercase animate-pulse">
+          <span className="font-mono text-[10px] text-green-500/80 tracking-[0.3em] uppercase animate-pulse">
             System Ready
           </span>
         </div>
@@ -60,7 +60,7 @@ const BootScreen = ({ onEnter }) => {
             size={18}
           />
 
-          <span className="font-mono text-xs text-green-400 tracking-widest font-bold uppercase">
+          <span className="font-sans text-xs text-green-400 tracking-widest font-bold uppercase">
             Unlock
           </span>
 

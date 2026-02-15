@@ -1,3 +1,5 @@
+"use client";
+
 import TechStack from "./about/TechStack";
 
 const TechStackSection = ({ ref }) => {

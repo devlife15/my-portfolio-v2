@@ -1,3 +1,5 @@
+"use client";
+
 import ProjectCard from "./project/ProjectCard";
 import useSystemSound from "../../hooks/useSystemSound";
 

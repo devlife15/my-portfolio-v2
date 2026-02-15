@@ -29,16 +29,16 @@ const PodcastCard = ({ title, show, episode, image, link, playSound }) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        <span className="font-mono text-[10px] text-[#555555] uppercase tracking-wider">
+        <span className="font-saansmono text-[10px] text-[#555555] uppercase tracking-wider">
           {show}
         </span>
 
-        <h3 className="font-editorial text-[16px] leading-tight text-[#CCCCCC] group-hover:text-white transition-colors line-clamp-2">
+        <h3 className="font-saans text-[16px] leading-tight text-[#CCCCCC] group-hover:text-white transition-colors line-clamp-2">
           {title}
         </h3>
 
         {episode && (
-          <span className="font-sans text-[12px] text-[#444444]">
+          <span className="font-saansmono text-[12px] text-[#444444]">
             Ep. {episode}
           </span>
         )}
