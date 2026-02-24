@@ -27,6 +27,20 @@ const PortfolioPage = () => {
   const { isPlaying, togglePlay, nextTrack } = useLofi();
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
 
+  useEffect(() => {
+    const hasBooted = sessionStorage.getItem("portfolioBooted");
+    if (hasBooted) {
+      setIsLoading(false);
+      setHasEntered(true);
+    }
+  }, []);
+
+  // --- NEW: Save to session storage when user enters ---
+  const handleEnter = () => {
+    setHasEntered(true);
+    sessionStorage.setItem("portfolioBooted", "true");
+  };
+
   const headerRef = useRef(null);
   const aboutRef = useRef(null);
   const experienceRef = useRef(null);
@@ -147,7 +161,7 @@ const PortfolioPage = () => {
     <div className="min-h-screen text-[#888888] font-sans selection:bg-white/20 selection:text-white">
       {isLoading && <PreLoader onComplete={() => setIsLoading(false)} />}
 
-      {!hasEntered && <BootScreen onEnter={() => setHasEntered(true)} />}
+      {!hasEntered && <BootScreen onEnter={handleEnter} />}
 
       {!isLoading && hasEntered && (
         <>

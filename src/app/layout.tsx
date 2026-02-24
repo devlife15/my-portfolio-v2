@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import SmoothScroll from "../components/effects/SmoothScroll";
-import FloatingASCII from "../components/effects/FloatingASCII";
+import KineticGrid from "../components/effects/KineticGrid";
 
 const editorial = localFont({
   src: [
@@ -72,7 +72,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${editorial.variable} ${saans.variable} ${saansmono.variable} antialiased`}
       >
-        <FloatingASCII />
+        <KineticGrid />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

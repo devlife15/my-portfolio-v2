@@ -1,6 +1,7 @@
 "use client";
 import WritingRow from "./blog/WritingRow";
 import { FiArrowRight } from "react-icons/fi";
+import { ARTICLES } from "@/data/articles";
 
 const BlogsSection = ({ ref }) => {
   return (
@@ -10,35 +11,20 @@ const BlogsSection = ({ ref }) => {
       </h2>
       <div className="flex flex-col">
         {/* Render 5-6 Items */}
-        <WritingRow
-          title="How I built a terminal portfolio with React"
-          date="Oct 2025"
-          link="#"
-        />
-        <WritingRow
-          title="Understanding React Server Components"
-          date="Sep 2025"
-          link="#"
-        />
-        <WritingRow
-          title="The art of micro-interactions"
-          date="Aug 2025"
-          link="#"
-        />
-        <WritingRow
-          title="Why I switched from VS Code to Neovim"
-          date="Jul 2025"
-          link="#"
-        />
-        <WritingRow
-          title="Designing for dark mode first"
-          date="Jun 2025"
-          link="#"
-        />
+        {ARTICLES.map((article) => {
+          return (
+            <WritingRow
+              key={article.id}
+              href={`/blogs/${article.slug}`}
+              title={article.title}
+              date={article.date}
+            />
+          );
+        })}
       </div>
 
       <a
-        href="/blog"
+        href="/blogs"
         className="group inline-flex items-center gap-2 text-xs font-saansmono text-[#666666] hover:text-white transition-colors"
       >
         <span>read all posts</span>
