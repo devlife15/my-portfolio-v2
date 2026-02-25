@@ -8,6 +8,7 @@ import BootScreen from "./layout/BootScreen";
 import Dock from "./features/Dock";
 import { useLofi } from "../hooks/useLofi";
 import TerminalModal from "./features/terminal/TerminalModal";
+import TypingModal from "./features/terminal/TypingModal";
 import HeroSection from "./sections/HeroSection";
 import ProjectSection from "./sections/ProjectSection";
 import TechStackSection from "./sections/TechStackSection";
@@ -26,6 +27,7 @@ const PortfolioPage = () => {
   const [hasEntered, setHasEntered] = useState(false);
   const { isPlaying, togglePlay, nextTrack } = useLofi();
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [isTypingOpen, setIsTypingOpen] = useState(false);
 
   useEffect(() => {
     const hasBooted = sessionStorage.getItem("portfolioBooted");
@@ -35,7 +37,6 @@ const PortfolioPage = () => {
     }
   }, []);
 
-  // --- NEW: Save to session storage when user enters ---
   const handleEnter = () => {
     setHasEntered(true);
     sessionStorage.setItem("portfolioBooted", "true");
@@ -54,21 +55,17 @@ const PortfolioPage = () => {
   const footerRef = useRef(null);
 
   useLayoutEffect(() => {
-    // 1. Safety check
     if (isLoading || !hasEntered) return;
 
     const ctx = gsap.context(() => {
-      // Create the Master Timeline
       const tl = gsap.timeline({ delay: 0.3 });
 
-      // --- STEP 1: Hero Header ---
       tl.fromTo(
         headerRef.current,
         { opacity: 0, y: 40 },
         { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
       )
 
-        // --- STEP 2: About Text ---
         .fromTo(
           aboutRef.current?.querySelectorAll("p") || [],
           { opacity: 0, y: 20 },
@@ -79,12 +76,9 @@ const PortfolioPage = () => {
             stagger: 0.15,
             ease: "power2.out",
           },
-          "-=0.3", // Slight overlap with header
+          "-=0.3",
         )
 
-        // --- STEP 3: Experience Cards (The Change) ---
-        // We attach this directly to the timeline.
-        // It will NOT start until Step 2 finishes.
         .fromTo(
           experienceRef.current,
           { opacity: 0, y: 50 },
@@ -97,13 +91,9 @@ const PortfolioPage = () => {
             // you can animate 'experienceRef.current.children' instead,
             // but animating the parent is the safest fix for your current setup.
           },
-          "-=0.1", // Overlap slightly with previous animation
+          "-=0.1",
         );
 
-      // --- REMAINING SECTIONS (Keep these on ScrollTrigger) ---
-      // These are further down the page, so they should wait for scrolling.
-
-      // Helper function (unchanged)
       const scrollReveal = (element) => {
         if (!element) return;
         gsap.fromTo(
@@ -123,7 +113,6 @@ const PortfolioPage = () => {
         );
       };
 
-      // Projects (Still needs ScrollTrigger as it's likely below the fold)
       gsap.fromTo(
         projectsSectionRef.current?.querySelectorAll(".project-card") || [],
         { opacity: 0, y: 50 },
@@ -141,7 +130,6 @@ const PortfolioPage = () => {
         },
       );
 
-      // Initialize other sections
       scrollReveal(techSectionRef.current);
       scrollReveal(writingsSectionRef.current);
       scrollReveal(activitySectionRef.current);
@@ -150,7 +138,6 @@ const PortfolioPage = () => {
       scrollReveal(podcastsSectionRef.current);
       scrollReveal(footerRef.current);
 
-      // Refresh positions to prevent jitter
       ScrollTrigger.refresh();
     });
 
@@ -165,12 +152,20 @@ const PortfolioPage = () => {
 
       {!isLoading && hasEntered && (
         <>
-          <Dock onTerminalClick={() => setIsTerminalOpen(true)} />
+          <Dock
+            onTerminalClick={() => setIsTerminalOpen(true)}
+            onTypingClick={() => setIsTypingOpen(true)}
+          />
 
           <TerminalModal
             isOpen={isTerminalOpen}
             onClose={() => setIsTerminalOpen(false)}
             musicState={{ isPlaying, togglePlay, nextTrack }}
+          />
+
+          <TypingModal
+            isOpen={isTypingOpen}
+            onClose={() => setIsTypingOpen(false)}
           />
 
           <div className="relative z-10 max-w-150 mx-auto px-6 py-24 md:py-32 flex flex-col gap-15">

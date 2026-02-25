@@ -7,6 +7,7 @@ import {
   FiTerminal,
   FiSkipForward,
   FiFileText,
+  FiCommand,
 } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 import useSystemSound from "../../hooks/useSystemSound";
@@ -37,7 +38,8 @@ const PLAYLIST = [
   },
 ];
 
-const Dock = ({ onTerminalClick }) => {
+// 👇 CHANGED: Added onTypingClick to the props
+const Dock = ({ onTerminalClick, onTypingClick }) => {
   const { playSound } = useSystemSound();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
@@ -45,12 +47,10 @@ const Dock = ({ onTerminalClick }) => {
   const [time, setTime] = useState(new Date());
   const [bouncing, setBouncing] = useState(false);
 
-  // 👇 NEW: Controls the visibility of the "Play Music" hint
   const [showHint, setShowHint] = useState(false);
 
   // Clock Timer
   useEffect(() => {
-    // Avoid hydration mismatch by updating time only on client
     setTime(new Date());
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -65,13 +65,10 @@ const Dock = ({ onTerminalClick }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // 👇 CHANGED: Removed auto-play logic. Just load the file.
   useEffect(() => {
     audioRef.current = new Audio(PLAYLIST[0].src);
     audioRef.current.loop = true;
     audioRef.current.volume = 0.05;
-
-    // No attemptPlay() here. Silent by default.
 
     return () => {
       if (audioRef.current) {
@@ -81,14 +78,11 @@ const Dock = ({ onTerminalClick }) => {
     };
   }, []);
 
-  // 👇 NEW: The "Gentle Nudge" Timer Logic
   useEffect(() => {
-    // 1. Wait 2 seconds before showing the hint
     const startTimer = setTimeout(() => {
       setShowHint(true);
     }, 2000);
 
-    // 2. Hide it automatically after 8 seconds (so it doesn't get annoying)
     const hideTimer = setTimeout(() => {
       setShowHint(false);
     }, 8000);
@@ -101,25 +95,19 @@ const Dock = ({ onTerminalClick }) => {
 
   const togglePlay = () => {
     if (!audioRef.current) return;
-
-    // Add feedback sound
     playSound("click");
-
     if (isPlaying) {
       audioRef.current.pause();
     } else {
       audioRef.current.play();
-      setShowHint(false); // Hide hint immediately if they play
+      setShowHint(false);
     }
     setIsPlaying(!isPlaying);
   };
 
   const playNext = (e) => {
     e.stopPropagation();
-
-    // Add feedback sound
     playSound("click");
-
     if (!audioRef.current) return;
     const nextIndex = (currentTrackIndex + 1) % PLAYLIST.length;
     setCurrentTrackIndex(nextIndex);
@@ -133,14 +121,12 @@ const Dock = ({ onTerminalClick }) => {
       <div className="flex items-center gap-3 px-5 h-14 rounded-full bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50 transition-all duration-300 hover:border-white/20 hover:scale-[1.02]">
         {/* MUSIC BUTTON WRAPPER */}
         <div className="group relative flex items-center justify-center">
-          {/* 👇 THE NEW TOOLTIP COMPONENT */}
           <div
             className={`absolute bottom-full mb-3 px-3 py-1.5 rounded-lg bg-[#222] border border-white/10 text-[10px] text-green-400 font-mono tracking-wide whitespace-nowrap shadow-xl transition-all duration-700 transform pointer-events-none z-50
             ${showHint && !isPlaying ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}
             `}
           >
             Click to play radio 🎵
-            {/* Little triangle arrow pointing down */}
             <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#222] border-b border-r border-white/10 rotate-45"></div>
           </div>
 
@@ -158,7 +144,7 @@ const Dock = ({ onTerminalClick }) => {
             </div>
           </button>
 
-          {/* NOW PLAYING POPUP (Original) */}
+          {/* NOW PLAYING POPUP */}
           <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 pb-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
             <div className="w-40 bg-[#111] border border-white/10 rounded-lg p-3 shadow-2xl relative">
               <div className="flex items-center justify-between mb-2">
@@ -204,8 +190,19 @@ const Dock = ({ onTerminalClick }) => {
               ? "animate-bounce text-green-400"
               : "text-gray-400 hover:text-white"
           }`}
+          title="Terminal"
         >
           <FiTerminal size={18} />
+        </button>
+
+        {/* 👇 NEW: TYPING TEST BUTTON */}
+        <button
+          onClick={onTypingClick}
+          onMouseEnter={() => playSound("dock")}
+          className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-full transition-all duration-300 active:scale-90"
+          title="Type Engine"
+        >
+          <FiCommand size={18} />
         </button>
 
         <div className="w-px h-6 bg-white/10" />

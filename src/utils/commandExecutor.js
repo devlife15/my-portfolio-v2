@@ -1,5 +1,3 @@
-// utils/commandExecutor.js
-
 import { commandHandlers } from "./commandHandler";
 
 export const executeCommand = async (

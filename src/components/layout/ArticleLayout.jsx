@@ -10,6 +10,7 @@ import {
   FiCheck,
 } from "react-icons/fi";
 import useSystemSound from "@/hooks/useSystemSound";
+import Highlight from "./Highlight";
 
 export default function ArticleLayout({
   title,

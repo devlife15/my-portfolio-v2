@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
-import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import SmoothScroll from "../components/effects/SmoothScroll";
 import KineticGrid from "../components/effects/KineticGrid";
+import "./globals.css";
 
 const editorial = localFont({
   src: [
@@ -72,6 +73,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${editorial.variable} ${saans.variable} ${saansmono.variable} antialiased`}
       >
+        <SpeedInsights />
         <KineticGrid />
         <SmoothScroll>{children}</SmoothScroll>
       </body>

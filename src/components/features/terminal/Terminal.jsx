@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { commands } from "../../../data/commands";
 import { blogArticles } from "../../../data/blogPublished";
 import { codingQuotes } from "../../../data/codingQuotes";
 import { executeCommand } from "../../../utils/commandExecutor";
