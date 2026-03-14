@@ -1,9 +1,19 @@
 @import "tailwindcss";
 
+/* 1. LIGHT MODE (Default) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f9f9f9;
+  --foreground: #222222; /* Deep charcoal for sharp reading contrast */
 }
+
+/* 2. DARK MODE (Activated by next-themes .dark class) */
+.dark {
+  --background: #121212;
+  --foreground: #ababab; /* Your premium muted gray */
+}
+
+/* 3. TAILWIND v4 VARIANT CONFIG */
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
@@ -11,22 +21,30 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-editorial: var(--font-editorial);
-  --font-saans: var(--font-saans);
-  --font-saansmono: var(--font-saans-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-jetmono: var(--font-jetbrains-mono);
+  --font-pixel-circle: var(--font-geist-pixel-circle);
+  --font-pixel-square: var(--font-geist-pixel-square);
+  --font-instrument: var(--font-instrument-sans);
+  --font-switzer: var(--font-switzer);
+  --font-plex: var(--font-plex-mono);
 }
 
 html {
   scrollbar-gutter: stable;
 }
 
+/* 4. THE GLOBAL APPLY */
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease; /* Buttery smooth theme crossfade */
+}
+
+/* Hide default cursor on devices that use a mouse */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
 }

@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FiX, FiMaximize2, FiWifi } from "react-icons/fi";
 import useSystemSound from "@/hooks/useSystemSound";
 import Terminal from "./Terminal";
-import Leo from "./Leo";
 
 const TerminalModal = ({ isOpen, onClose, musicState }) => {
   const [isRendered, setIsRendered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false); // NEW: The Focus State Trigger
   const { playSound } = useSystemSound();
 
   useEffect(() => {
@@ -15,83 +14,81 @@ const TerminalModal = ({ isOpen, onClose, musicState }) => {
       setIsRendered(true);
       playSound("terminalopen");
     } else {
-      setTimeout(() => setIsRendered(false), 300);
+      setIsExpanded(false); // Reset to standard size when closed
+      setTimeout(() => setIsRendered(false), 500);
     }
-  }, [isOpen]);
+  }, [isOpen, playSound]);
 
   const handleClose = () => {
     playSound("terminalclose");
     onClose();
   };
 
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape" && isOpen) handleClose();
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isOpen]);
+
   if (!isRendered) return null;
 
   return (
-    <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
-        isOpen
-          ? "opacity-100 backdrop-blur-sm"
-          : "opacity-0 pointer-events-none"
-      }`}
-    >
-      {/* 1. BACKDROP (Click to close) */}
-      <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
-
-      {/* 2. THE HUD WINDOW */}
+    <div className="fixed inset-0 z-[100] flex items-end justify-center transition-all duration-500">
+      {/* 1. THE DIMMING BACKDROP */}
       <div
-        className={`relative w-full max-w-3xl flex flex-col transform transition-all duration-500 ease-out border border-white/10 rounded-lg overflow-hidden shadow-[0_0_50px_-10px_rgba(74,222,128,0.1)] ${
-          isOpen
-            ? "scale-100 translate-y-0 opacity-100"
-            : "scale-95 translate-y-10 opacity-0"
-        }`}
-        style={{
-          height: "min(600px, 80vh)",
-          // The "Glass" Effect
-          backgroundColor: "rgba(10, 10, 10, 0.8)",
-          backdropFilter: "blur(12px)",
-        }}
+        // Notice the heavy backdrop-blur-md. When maximized, this makes the site behind it look like frosted glass.
+        className={`absolute inset-0 bg-black/40 dark:bg-black/80 backdrop-blur-md transition-all duration-500 ${isOpen ? "opacity-100" : "opacity-0"}`}
+        onClick={handleClose}
+      />
+
+      {/* 2. THE COMMAND DRAWER */}
+      <div
+        // NEW: Dynamic height. Switches between h-[60vh]/[50vh] and a massive h-[95vh]
+        className={`relative w-full bg-white dark:bg-[#111111] border-t border-black/10 dark:border-white/10 flex flex-col transform transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isOpen ? "translate-y-0" : "translate-y-full"
+        } ${isExpanded ? "h-[95vh]" : "h-[60vh] md:h-[50vh]"}`}
       >
-        {/* --- HEADER: TECHNICAL STATUS BAR --- */}
-        <div className="h-9 shrink-0 bg-white/3 border-b border-white/5 flex items-center justify-between px-4 select-none">
-          {/* Left: Status Indicators */}
+        {/* --- HEADER --- */}
+        <div className="h-12 shrink-0 border-b border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02] flex items-center justify-between px-6 md:px-12 select-none">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-[10px] font-mono text-green-500/80 uppercase tracking-widest">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
-              </span>
-              System Online
-            </div>
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black dark:bg-white opacity-50"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#121212] dark:bg-[#EEEEEE]"></span>
+            </span>
+            <span className="font-jetmono text-[10px] tracking-[0.2em] uppercase text-[#121212] dark:text-[#EEEEEE]">
+              SYS_TERMINAL // LIVE
+            </span>
           </div>
 
-          {/* Center: Title */}
-          <div className="text-[10px] font-geistmono text-gray-500 uppercase tracking-[0.2em] hidden md:block opacity-50">
-            Portfolio_Mainframe_v1.25
+          <div className="hidden md:block font-jetmono text-[10px] tracking-[0.2em] uppercase text-[#666]">
+            PORTFOLIO_MAINFRAME_v2.0
           </div>
 
-          {/* Right: Controls */}
-          <div className="flex items-center gap-4">
-            <FiWifi size={12} className="text-gray-600" />
-            <div className="w-px h-3 bg-white/10"></div>
+          <div className="flex items-center gap-6">
+            {/* NEW: The Maximize/Minimize Toggle */}
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="font-jetmono text-[10px] tracking-[0.2em] uppercase text-[#666] hover:text-[#121212] dark:hover:text-[#EEEEEE] transition-colors"
+            >
+              [ {isExpanded ? "MINIMIZE" : "MAXIMIZE"} ]
+            </button>
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-white transition-colors"
+              className="font-jetmono text-[10px] tracking-[0.2em] uppercase text-[#666] hover:text-[#121212] dark:hover:text-[#EEEEEE] transition-colors"
             >
-              <FiX size={14} />
+              [ ESC TO CLOSE ]
             </button>
           </div>
         </div>
 
-        {/* --- BODY: THE TERMINAL ENGINE --- */}
-        <div className="flex-1 overflow-hidden relative">
-          {/* Scanline Effect (Optional overlay) */}
-          <div className="absolute inset-0 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] z-10"></div>
-
+        {/* --- BODY --- */}
+        <div className="flex-1 overflow-hidden relative bg-transparent">
+          <div className="absolute inset-0 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-[0.05] z-10 mix-blend-overlay"></div>
           <Terminal musicState={musicState} />
         </div>
       </div>
-
-      <Leo isOpen={isOpen} />
     </div>
   );
 };

@@ -29,7 +29,7 @@ const Tagline = () => {
         }}
       >
         {taglines.map((tagline, index) => (
-          <p key={index} className="h-7 font-saans text-[14px] text-[#666666]">
+          <p key={index} className="h-7 font-mono text-[12px] text-[#666666]">
             {tagline}
           </p>
         ))}

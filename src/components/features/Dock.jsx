@@ -8,6 +8,7 @@ import {
   FiSkipForward,
   FiFileText,
   FiCommand,
+  FiDisc, // 👇 Added the retro CD-ROM icon
 } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 import useSystemSound from "../../hooks/useSystemSound";
@@ -25,21 +26,33 @@ const DOCK_LINKS = [
 
 const PLAYLIST = [
   {
-    title: "Midnight Jazz",
-    src: "/songs/ambient.mp3",
+    title: "Track 1",
+    src: "/songs/Track 1.mp3",
   },
   {
-    title: "Code & Chill",
-    src: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112762.mp3",
+    title: "Track 2",
+    src: "/songs/Track 2.mp3",
   },
   {
-    title: "Empty Mind",
-    src: "https://cdn.pixabay.com/download/audio/2022/09/02/audio_72502a492a.mp3?filename=empty-mind-118973.mp3",
+    title: "Track 3",
+    src: "/songs/Track 3.mp3",
+  },
+  {
+    title: "Track 4",
+    src: "/songs/Track 4.mp3",
+  },
+  {
+    title: "Track 5",
+    src: "/songs/Track 5.mp3",
+  },
+  {
+    title: "Track 6",
+    src: "/songs/Track 6.mp3",
   },
 ];
 
-// 👇 CHANGED: Added onTypingClick to the props
-const Dock = ({ onTerminalClick, onTypingClick }) => {
+// 👇 CHANGED: Added onArchiveClick to the props
+const Dock = ({ onTerminalClick, onTypingClick, onArchiveClick }) => {
   const { playSound } = useSystemSound();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
@@ -67,8 +80,7 @@ const Dock = ({ onTerminalClick, onTypingClick }) => {
 
   useEffect(() => {
     audioRef.current = new Audio(PLAYLIST[0].src);
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.05;
+    audioRef.current.volume = 0.35;
 
     return () => {
       if (audioRef.current) {
@@ -95,7 +107,7 @@ const Dock = ({ onTerminalClick, onTypingClick }) => {
 
   const togglePlay = () => {
     if (!audioRef.current) return;
-    playSound("click");
+    playSound("terminalopen");
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -106,15 +118,36 @@ const Dock = ({ onTerminalClick, onTypingClick }) => {
   };
 
   const playNext = (e) => {
-    e.stopPropagation();
-    playSound("click");
+    // Only stop propagation and play sound if a user physically clicked it
+    if (e) {
+      e.stopPropagation();
+    }
+
     if (!audioRef.current) return;
+
     const nextIndex = (currentTrackIndex + 1) % PLAYLIST.length;
     setCurrentTrackIndex(nextIndex);
     audioRef.current.src = PLAYLIST[nextIndex].src;
     audioRef.current.play();
     setIsPlaying(true);
   };
+
+  // Auto-play next track when current one finishes
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleTrackEnd = () => {
+      playNext();
+    };
+
+    audio.addEventListener("ended", handleTrackEnd);
+
+    // Cleanup listener to prevent memory leaks or double-firing
+    return () => {
+      audio.removeEventListener("ended", handleTrackEnd);
+    };
+  }, [currentTrackIndex]); // 👈 This dependency ensures playNext always knows the current index
 
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
@@ -195,7 +228,7 @@ const Dock = ({ onTerminalClick, onTypingClick }) => {
           <FiTerminal size={18} />
         </button>
 
-        {/* 👇 NEW: TYPING TEST BUTTON */}
+        {/* TYPING TEST BUTTON */}
         <button
           onClick={onTypingClick}
           onMouseEnter={() => playSound("dock")}
@@ -203,6 +236,16 @@ const Dock = ({ onTerminalClick, onTypingClick }) => {
           title="Type Engine"
         >
           <FiCommand size={18} />
+        </button>
+
+        {/* 👇 NEW: RETRO ARCHIVE BUTTON */}
+        <button
+          onClick={onArchiveClick}
+          onMouseEnter={() => playSound("dock")}
+          className="p-2 text-gray-400 hover:text-amber-500 hover:bg-amber-500/10 rounded-full transition-all duration-300 active:scale-90"
+          title="System Archive"
+        >
+          <FiDisc size={18} />
         </button>
 
         <div className="w-px h-6 bg-white/10" />

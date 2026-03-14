@@ -1,43 +1,52 @@
+"use client";
+
 import { GitHubCalendar } from "react-github-calendar";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 const GithubStats = ({ username }) => {
-  const theme = {
-    dark: [
-      "#333333", // Level 0 (Empty)
-      "#4D4D4D", // Level 1
-      "#7F7F7F", // Level 2
-      "#B3B3B3", // Level 3
-      "#FFFFFF", // Level 4 (Pure White)
-    ],
+  const { theme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = theme === "system" ? systemTheme : theme;
+  const isDark = currentTheme === "dark";
+
+  const customTheme = {
+    light: ["#F5F5F5", "#D4D4D4", "#A3A3A3", "#525252", "#111111"],
+    dark: ["#161616", "#333333", "#666666", "#999999", "#EEEEEE"],
   };
 
+  if (!mounted) {
+    return (
+      <div className="w-full h-[150px] animate-pulse bg-black/5 dark:bg-white/5 rounded-sm" />
+    );
+  }
+
   return (
-    <div className="w-full flex flex-col items-center justify-center pt-8">
-      {/* 1. [mask-image]: Creates the fade effect on left & right edges.
-         2. overflow-x-auto: Allows scrolling if the graph is too wide.
-         3. no-scrollbar: Hides the scrollbar for a cleaner look.
-      */}
-      <div className="relative w-full overflow-x-auto [&::-webkit-scrollbar]:hidden mask-[linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-        {/* min-w-[700px]: Forces the container to be wide enough so the graph 
-           doesn't squish, triggering the scroll/fade behavior.
-           mx-auto: Centers it initially.
-        */}
-        <div className="flex justify-center min-w-175 px-8">
+    <div className="w-full flex flex-col items-start justify-center pt-2">
+      <div className="w-full flex justify-start overflow-hidden [&_rect]:rx-0 [&_rect]:ry-0">
+        <div className="min-w-max">
           <GitHubCalendar
             username={username}
-            year={new Date().getFullYear()} // Dynamically use current year
-            colorScheme="dark"
+            year={new Date().getFullYear()}
+            colorScheme={isDark ? "dark" : "light"}
+            theme={customTheme}
             blockSize={12}
-            blockMargin={4}
+            blockMargin={3}
             fontSize={12}
+            hideColorLegend={true}
+            hideTotalCount={false}
             style={{
-              color: "#9ca3af",
+              color: isDark ? "#888888" : "#666666",
+              fontFamily: "var(--font-plex)",
             }}
           />
         </div>
       </div>
-
-      {/* Optional: Tiny scroll hint if you want, but the fade usually implies it */}
     </div>
   );
 };
