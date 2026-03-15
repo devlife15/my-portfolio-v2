@@ -6,12 +6,15 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import MagneticButton from "../effects/MagneticButton";
 import useSystemSound from "@/hooks/useSystemSound";
+import ScrollIndicator from "@/components/effects/ScrollIndicator";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const HeroSection = forwardRef(function HeroSection({ aboutRef }, ref) {
+const HeroSection = forwardRef(function HeroSection(_, ref) {
   const { playSound } = useSystemSound();
-  const containerRef = useRef(null);
+
+  // THE FIX 1: Create a dedicated local ref just for the bio
+  const bioRef = useRef(null);
 
   const bioText =
     "I care deeply about writing clean code, building thoughtful user experiences, and continuously improving my craft. I'm currently seeking opportunities where I can contribute, learn fast, and build software that matters. If that sounds aligned with what you're creating, let's start a conversation.";
@@ -19,33 +22,33 @@ const HeroSection = forwardRef(function HeroSection({ aboutRef }, ref) {
   const words = bioText.split(" ");
 
   useEffect(() => {
-    let ctx;
-    document.fonts.ready.then(() => {
-      ctx = gsap.context(() => {
-        gsap.to(".reveal-word", {
-          opacity: 1,
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: aboutRef?.current || containerRef.current,
-            start: "top 60%",
-            end: "bottom 30%",
-            scrub: 1,
-          },
-        });
-      }, containerRef);
-    });
+    // THE FIX 2: Scope the context strictly to the bioRef
+    let ctx = gsap.context(() => {
+      // THE FIX 3: Use gsap.to() instead of fromTo() to respect Tailwind's initial opacity-20
+      gsap.to(".reveal-word", {
+        opacity: 1,
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: bioRef.current,
+          // As you scroll down, the bio moves UP.
+          // Start highlighting when the bio's top hits 60% of the screen.
+          // Finish when the bio's bottom hits 20% of the screen.
+          start: "top 60%",
+          end: "bottom 20%",
+          scrub: true,
+        },
+      });
+    }, bioRef);
 
-    return () => {
-      if (ctx) ctx.revert();
-    };
-  }, [aboutRef]);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
-      ref={ref || containerRef}
-      className="w-full flex flex-col items-start justify-center pt-[25vh] pb-32"
+      // Parent fully controls this ref now, no conflicts
+      ref={ref}
+      className="relative w-full min-h-screen flex flex-col items-start justify-center pt-[5vh] pb-12"
     >
-      {/* Remove translate-y-4 from all — GSAP sets this via gsap.set above */}
       <div className="hero-item relative w-16 h-16 rounded-2xl bg-black/5 dark:bg-[#121212] border border-black/3 dark:border-white/3 overflow-hidden mb-6 shadow-sm shrink-0 transition-all duration-300 ease-out hover:scale-110 hover:rotate-3">
         <Image
           src="/Me.png"
@@ -62,14 +65,16 @@ const HeroSection = forwardRef(function HeroSection({ aboutRef }, ref) {
       </h1>
 
       <div
-        ref={aboutRef}
+        // Attach the local ref directly to the bio container
+        ref={bioRef}
         className="hero-item font-switzer text-[clamp(16px,3vw,20px)] leading-[1.2] text-left mb-10"
       >
         <p className="flex flex-wrap justify-start gap-x-[0.25em] gap-y-[0.1em]">
           {words.map((word, index) => (
             <span
               key={index}
-              className="reveal-word opacity-40 text-[#121212] dark:text-[#EEEEEE] transition-colors duration-300"
+              // THE FIX 4: Put opacity-20 back so it is hardcoded to be dim on load
+              className="reveal-word opacity-20 text-[#121212] dark:text-[#EEEEEE] transition-colors duration-300"
             >
               {word}
             </span>
@@ -87,7 +92,6 @@ const HeroSection = forwardRef(function HeroSection({ aboutRef }, ref) {
         </span>
       </div>
 
-      {/* MagneticButton needs to wrap the hero-item class on its root element */}
       <div className="hero-item">
         <MagneticButton
           href="mailto:kumarayanatwork@email.com"
@@ -96,6 +100,8 @@ const HeroSection = forwardRef(function HeroSection({ aboutRef }, ref) {
           Get in touch
         </MagneticButton>
       </div>
+
+      <ScrollIndicator />
     </section>
   );
 });

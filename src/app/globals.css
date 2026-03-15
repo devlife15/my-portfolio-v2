@@ -29,8 +29,15 @@
   --font-plex: var(--font-plex-mono);
 }
 
+::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+  background: transparent;
+}
+
 html {
-  scrollbar-gutter: stable;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 /* 4. THE GLOBAL APPLY */
