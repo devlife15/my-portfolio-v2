@@ -126,7 +126,7 @@ const PortfolioPage = () => {
             </div>
 
             {/* Changed pb-10 to pb-32 to create a massive invisible bumper for the scroll */}
-            <main className="relative z-10 w-full px-6 xl:px-12 pb-32 flex flex-col border-x-0 xl:border-x border-black/3 dark:border-white/3">
+            <main className="relative z-10 w-full px-6 xl:px-12 pb-10 flex flex-col border-x-0 xl:border-x border-black/3 dark:border-white/3">
               <HeroSection ref={heroRef} />
               <ProjectSection />
               <TechStackSection />

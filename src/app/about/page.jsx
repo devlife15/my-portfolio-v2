@@ -12,6 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const AboutPage = () => {
   const layoutRef = useRef(null);
+  const navbarRef = useRef(null); // Added ref for the new Dock
 
   useEffect(() => {
     if (layoutRef.current) {
@@ -20,7 +21,13 @@ const AboutPage = () => {
         const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
         tl.to(".page-wrapper", { opacity: 1, duration: 0.5 })
-          .to(".navbar-wrapper", { opacity: 1, duration: 1 }, "-=0.2")
+          // THE FIX: Animate the Dock directly, no X-axis math needed
+          .fromTo(
+            navbarRef.current,
+            { opacity: 0, y: -20 },
+            { opacity: 1, y: 0, duration: 1, clearProps: "transform" },
+            "-=0.2",
+          )
           .fromTo(
             ".hero-item",
             { y: 30, opacity: 0 },
@@ -123,22 +130,19 @@ const AboutPage = () => {
   return (
     <div
       ref={layoutRef}
-      className="min-h-screen text-[#888888] selection:bg-white/20 selection:text-white flex flex-col"
+      className="min-h-screen text-[#888888] selection:bg-white/20 selection:text-white flex flex-col relative"
     >
-      <div className="page-wrapper opacity-0 w-full flex flex-col flex-grow">
-        <div className="navbar-wrapper opacity-0 sticky top-0 z-50 w-full">
-          <Navbar />
-        </div>
+      {/* THE FIX: Dock pulled outside the page wrapper so it floats globally */}
+      <Navbar ref={navbarRef} />
 
+      <div className="page-wrapper opacity-0 w-full flex flex-col flex-grow">
         <TelemetryHUD />
 
-        <main className="relative z-10 w-full flex flex-col flex-grow pt-10">
+        <main className="relative z-10 w-full flex flex-col flex-grow">
           {/* =========================================
               ROW 1: THE FULL-VIEWPORT HERO GRID
           ========================================= */}
-          <div
-            className={`${masterGrid} min-h-[calc(100vh-40px)] border-b ${gridLine}`}
-          >
+          <div className={`${masterGrid} min-h-screen border-b ${gridLine}`}>
             {/* 1. LEFT TRACK (Desktop Only) */}
             <div
               className={`hidden xl:flex flex-col justify-end items-start text-left p-6 xl:pl-8 xl:py-2 xl:border-r ${gridLine}`}
@@ -178,7 +182,7 @@ const AboutPage = () => {
 
             {/* 3. RIGHT TRACK (TL;DR - Now visible on Mobile) */}
             <div
-              className={`flex flex-col justify-start items-start text-left p-6 md:p-8 xl:p-12`}
+              className={`flex flex-col justify-start items-start text-left p-6 md:p-8 xl:p-12 pt-24 md:pt-28 xl:pt-32`}
             >
               <div className="hero-item opacity-0 flex flex-col gap-4 mt-0 xl:mt-4">
                 <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#666]">

@@ -80,7 +80,7 @@ const FooterSection = ({ sectionRef }) => {
   return (
     <footer
       ref={sectionRef || containerRef}
-      className="w-full flex flex-col pb-15"
+      className="w-full flex flex-col pb-10"
     >
       {/* 1. THE BILLBOARD (Massive CTA) */}
       <a
@@ -88,7 +88,7 @@ const FooterSection = ({ sectionRef }) => {
         onMouseEnter={() => playSound("hover")}
         onClick={() => playSound("click")}
         // 👇 Ledger line updated for dual-theme
-        className="group flex flex-col items-center justify-center mb-8 cursor-pointer w-full relative transition-colors duration-300"
+        className="group flex flex-col items-center justify-center mb-6 cursor-pointer w-full relative transition-colors duration-300"
       >
         {/* 👇 Subtitle: Rests at a muted gray, snaps to solid black/white on hover */}
         <span className="font-switzer text-[20px] leading-6 text-[#666666] dark:text-[#ABABAB] mb-6 group-hover:text-[#111111] dark:group-hover:text-[#EEEEEE] transition-colors duration-300 text-center">
