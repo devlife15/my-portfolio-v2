@@ -1,66 +1,71 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 
 const Preloader = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
 
+  // 👇 NEW: State to hold our client-side opacity calculation
+  const [flickerOpacity, setFlickerOpacity] = useState(1);
+
   useEffect(() => {
-    // 1. Logic to increment the counter
-    // We use a slightly randomized interval to make it feel like "real" loading
+    let currentProgress = 0;
+
+    // Aggressive, fast interval for that "computing" feel
     const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          return 100;
-        }
-        // Random jump between 1 and 15
-        const jump = Math.floor(Math.random() * 15) + 1;
-        // Ensure we don't exceed 100
-        return Math.min(prev + jump, 100);
-      });
-    }, 150); // Update every 150ms
+      currentProgress += Math.floor(Math.random() * 12) + 1;
+
+      if (currentProgress >= 100) {
+        currentProgress = 100;
+        setProgress(100);
+        setFlickerOpacity(1); // 👇 Lock to solid white when complete
+        clearInterval(timer);
+
+        // Hold at 100% for exactly half a second so it registers mentally
+        setTimeout(() => setIsExiting(true), 500);
+
+        // Wait 1 second for the scale/blur exit animation to finish before unmounting
+        setTimeout(onComplete, 1500);
+      } else {
+        setProgress(currentProgress);
+        // 👇 Safely calculate the flicker on the client side only
+        setFlickerOpacity(0.7 + Math.random() * 0.3);
+      }
+    }, 60);
 
     return () => clearInterval(timer);
-  }, []);
-
-  // 2. Trigger Exit when 100% is reached
-  useEffect(() => {
-    if (progress === 100) {
-      setTimeout(() => {
-        setIsExiting(true); // Trigger slide-up animation
-        setTimeout(onComplete, 1000); // Unmount component after animation finishes
-      }, 500); // Wait 0.5s at 100% before sliding up
-    }
-  }, [progress, onComplete]);
+  }, [onComplete]);
 
   return (
-    <div
-      className={`fixed inset-0 z-9999 bg-black text-[#888888] flex flex-col justify-between px-6 py-8 md:px-12 md:py-10 
-      transition-opacity duration-1000 ease-out 
-      ${isExiting ? "opacity-0 pointer-events-none" : "opacity-100"}`}
-    >
-      {/* --- TOP ROW --- */}
-      <div className="flex justify-between items-start font-geist text-xs md:text-sm tracking-[0.2em] uppercase opacity-80">
-        <span>Ayan Kumar</span>
-        <span>Portfolio ©2026</span>
+    <div className="fixed inset-0 z-[99999] bg-[#0a0a0a] flex flex-col items-center justify-center">
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.04] mix-blend-overlay pointer-events-none"></div>
+
+      <div
+        className={`relative z-10 flex items-center justify-center transition-all duration-1000 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+          isExiting
+            ? "opacity-0 scale-75 blur-md"
+            : "opacity-100 scale-100 blur-0"
+        }`}
+      >
+        <span
+          className="font-editorial text-6xl md:text-8xl font-light tracking-tight text-[#EEEEEE] tabular-nums flex items-baseline"
+          // 👇 Simply read the safe state value here. Zero mismatch!
+          style={{ opacity: flickerOpacity }}
+        >
+          {progress}
+          <span className="text-3xl md:text-5xl text-[#555555] ml-2 font-light">
+            %
+          </span>
+        </span>
       </div>
 
-      {/* --- BOTTOM ROW --- */}
-      <div className="flex justify-between items-end">
-        {/* Location (Bottom Left) */}
-        <div className="font-geist text-xs md:text-sm tracking-[0.2em] uppercase opacity-80 mb-2 md:mb-4">
-          Purulia, India
-        </div>
-
-        {/* Big Counter (Bottom Right) 
-            - font-editorial: Your serif font
-            - text-[18vw]: Massive responsive size based on viewport width
-            - leading-none: Tight line height
-            - italic: Matches the reference vibe
-        */}
-        <div className="font-editorial text-[20vw] md:text-[9vw] leading-[0.8] text-[#EEEEEE] italic -mr-2 md:-mr-4">
-          {progress}%
-        </div>
+      <div
+        className={`absolute bottom-12 font-switzer text-[10px] uppercase tracking-[0.4em] text-[#444444] transition-all duration-700 delay-100 ${
+          isExiting ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
+        }`}
+      >
+        {progress === 100 ? "System Ready" : "Initializing"}
       </div>
     </div>
   );

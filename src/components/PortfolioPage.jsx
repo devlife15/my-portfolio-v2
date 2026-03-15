@@ -1,33 +1,39 @@
 "use client";
 
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
 import PreLoader from "../components/effects/PreLoader";
 import BootScreen from "./layout/BootScreen";
-import Dock from "./features/Dock";
 import { useLofi } from "../hooks/useLofi";
 import TerminalModal from "./features/terminal/TerminalModal";
 import TypingModal from "./features/terminal/TypingModal";
+import CoverFlowModal from "./features/CoverFlowModal";
+import Navbar from "./sections/Navbar";
+import LeftSidebar from "./sections/LeftSidebar";
+import RightSidebar from "./sections/RightSidebar";
 import HeroSection from "./sections/HeroSection";
 import ProjectSection from "./sections/ProjectSection";
 import TechStackSection from "./sections/TechStackSection";
-import WorkExpSection from "./sections/WorkExpSection";
-import BlogsSection from "./sections/BlogsSection";
 import GithubSection from "./sections/GithubSection";
-import BooksSection from "./sections/BooksSection";
+import BlogsSection from "./sections/BlogsSection";
 import ArticleSection from "./sections/ArticleSection";
+import BooksSection from "./sections/BooksSection";
 import PodcastsSection from "./sections/PodcastsSection";
 import FooterSection from "./sections/FooterSection";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const PortfolioPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasEntered, setHasEntered] = useState(false);
   const { isPlaying, togglePlay, nextTrack } = useLofi();
+
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [isTypingOpen, setIsTypingOpen] = useState(false);
+  const [isArchiveOpen, setIsArchiveOpen] = useState(false);
+
+  const navbarRef = useRef(null);
+  const leftSidebarRef = useRef(null);
+  const rightSidebarRef = useRef(null);
+  const heroRef = useRef(null);
 
   useEffect(() => {
     const hasBooted = sessionStorage.getItem("portfolioBooted");
@@ -42,145 +48,101 @@ const PortfolioPage = () => {
     sessionStorage.setItem("portfolioBooted", "true");
   };
 
-  const headerRef = useRef(null);
-  const aboutRef = useRef(null);
-  const experienceRef = useRef(null);
-  const projectsSectionRef = useRef(null);
-  const techSectionRef = useRef(null);
-  const writingsSectionRef = useRef(null);
-  const activitySectionRef = useRef(null);
-  const librarySectionRef = useRef(null);
-  const bookmarksSectionRef = useRef(null);
-  const podcastsSectionRef = useRef(null);
-  const footerRef = useRef(null);
+  useEffect(() => {
+    if (!hasEntered) return;
 
-  useLayoutEffect(() => {
-    if (isLoading || !hasEntered) return;
+    const timer = setTimeout(() => {
+      if (!navbarRef.current) return;
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.3 });
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       tl.fromTo(
-        headerRef.current,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+        navbarRef.current,
+        // No X-axis math required anymore. Flexbox handles it natively.
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.7, clearProps: "transform" },
       )
-
+        // Removed the stagger overlap so the Dock lands completely cleanly
         .fromTo(
-          aboutRef.current?.querySelectorAll("p") || [],
+          ".hero-item",
           { opacity: 0, y: 20 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
-            stagger: 0.15,
-            ease: "power2.out",
-          },
-          "-=0.3",
-        )
-
-        .fromTo(
-          experienceRef.current,
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            // If you want the title and card to stagger slightly,
-            // you can animate 'experienceRef.current.children' instead,
-            // but animating the parent is the safest fix for your current setup.
-          },
-          "-=0.1",
-        );
-
-      const scrollReveal = (element) => {
-        if (!element) return;
-        gsap.fromTo(
-          element,
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1,
-            y: 0,
             duration: 0.7,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: element,
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
+            stagger: 0.1,
+            clearProps: "transform",
           },
+        )
+        .fromTo(
+          ".sidebar-item, .sidebar-item-right",
+          { opacity: 0, y: 16 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            stagger: 0.06,
+            clearProps: "transform",
+          },
+          "-=0.4",
         );
-      };
+    }, 100);
 
-      gsap.fromTo(
-        projectsSectionRef.current?.querySelectorAll(".project-card") || [],
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: projectsSectionRef.current,
-            start: "top 75%",
-            toggleActions: "play none none none",
-          },
-        },
-      );
-
-      scrollReveal(techSectionRef.current);
-      scrollReveal(writingsSectionRef.current);
-      scrollReveal(activitySectionRef.current);
-      scrollReveal(librarySectionRef.current);
-      scrollReveal(bookmarksSectionRef.current);
-      scrollReveal(podcastsSectionRef.current);
-      scrollReveal(footerRef.current);
-
-      ScrollTrigger.refresh();
-    });
-
-    return () => ctx.revert();
-  }, [isLoading, hasEntered]);
+    return () => clearTimeout(timer);
+  }, [hasEntered]);
 
   return (
-    <div className="min-h-screen text-[#888888] font-sans selection:bg-white/20 selection:text-white">
+    <div className="min-h-screen text-[#888888] selection:bg-white/20 selection:text-white flex flex-col">
       {isLoading && <PreLoader onComplete={() => setIsLoading(false)} />}
-
-      {!hasEntered && <BootScreen onEnter={handleEnter} />}
+      {!isLoading && !hasEntered && <BootScreen onEnter={handleEnter} />}
 
       {!isLoading && hasEntered && (
-        <>
-          <Dock
-            onTerminalClick={() => setIsTerminalOpen(true)}
-            onTypingClick={() => setIsTypingOpen(true)}
-          />
+        <div className="w-full flex flex-col grow relative">
+          {/* THE FIX: Ripped out the sticky wrapper. The Navbar now floats freely. */}
+          <Navbar ref={navbarRef} />
 
           <TerminalModal
             isOpen={isTerminalOpen}
             onClose={() => setIsTerminalOpen(false)}
             musicState={{ isPlaying, togglePlay, nextTrack }}
           />
-
           <TypingModal
             isOpen={isTypingOpen}
             onClose={() => setIsTypingOpen(false)}
           />
+          <CoverFlowModal
+            isOpen={isArchiveOpen}
+            onClose={() => setIsArchiveOpen(false)}
+          />
 
-          <div className="relative z-10 max-w-150 mx-auto px-6 py-24 md:py-32 flex flex-col gap-15">
-            <HeroSection ref={headerRef} aboutRef={aboutRef} />
-            <WorkExpSection ref={experienceRef} />
-            <ProjectSection ref={projectsSectionRef} />
-            <TechStackSection ref={techSectionRef} />
-            <GithubSection ref={activitySectionRef} />
-            <BlogsSection ref={writingsSectionRef} />
-            <BooksSection ref={librarySectionRef} />
-            <ArticleSection ref={bookmarksSectionRef} />
-            <PodcastsSection ref={podcastsSectionRef} />
-            <FooterSection ref={footerRef} />
+          <div className="w-full min-h-screen grid grid-cols-1 xl:grid-cols-[1fr_minmax(auto,672px)_1fr]">
+            <div className="hidden xl:block z-40">
+              <LeftSidebar
+                ref={leftSidebarRef}
+                onTerminalClick={() => setIsTerminalOpen(true)}
+                onTypingClick={() => setIsTypingOpen(true)}
+                onArchiveClick={() => setIsArchiveOpen(true)}
+              />
+            </div>
+
+            {/* Changed pb-10 to pb-32 to create a massive invisible bumper for the scroll */}
+            <main className="relative z-10 w-full px-6 xl:px-12 pb-10 flex flex-col border-x-0 xl:border-x border-black/3 dark:border-white/3">
+              <HeroSection ref={heroRef} />
+              <ProjectSection />
+              <TechStackSection />
+              <GithubSection />
+              <BlogsSection />
+              <BooksSection />
+              <ArticleSection />
+              <PodcastsSection />
+              <FooterSection />
+            </main>
+
+            <div className="hidden xl:block z-40">
+              <RightSidebar ref={rightSidebarRef} />
+            </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

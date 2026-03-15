@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion"; // For the smooth float
-import ProjectCard from "../../ProjectCard"; // Import your existing card
+import ProjectCard from "./ProjectCard"; // Import your existing card
 
 const ProjectList = ({ projects }) => {
   // State to track which project is active (for the image)

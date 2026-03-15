@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useContext, useState } from "react";
 
 const CursorContext = createContext();
@@ -5,6 +7,7 @@ const CursorContext = createContext();
 export const CursorProvider = ({ children }) => {
   const [cursorVariant, setCursorVariant] = useState("default");
 
+  // Keep your handy shortcuts in case you are using them elsewhere!
   const textEnter = () => setCursorVariant("text");
   const textLeave = () => setCursorVariant("default");
 
@@ -13,7 +16,14 @@ export const CursorProvider = ({ children }) => {
 
   return (
     <CursorContext.Provider
-      value={{ cursorVariant, textEnter, textLeave, buttonEnter, buttonLeave }}
+      value={{
+        cursorVariant,
+        setCursorVariant, // 👇 ADDED THIS: Now components can trigger ANY custom state!
+        textEnter,
+        textLeave,
+        buttonEnter,
+        buttonLeave,
+      }}
     >
       {children}
     </CursorContext.Provider>

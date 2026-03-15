@@ -12,11 +12,14 @@ const Terminal = () => {
   const [input, setInput] = useState("");
   const [commandHistory, setCommandHistory] = useState([
     {
-      text: "Welcome to Ayan's Portfolio Terminal v1.25",
+      text: "SYSTEM_BOOT // AYAN_OS v2.0.0 INITIALIZED.",
       type: "system-title",
     },
-    { text: "© 2026 Ayan. All rights reserved.", type: "system-copyright" },
-    { text: 'Type "help" to see available commands.', type: "system" },
+    {
+      text: "(c) 2026 AYAN KUMAR. ALL PROTOCOLS ACTIVE.",
+      type: "system-copyright",
+    },
+    { text: "TYPE 'help' TO ACCESS DIRECTORY.", type: "system" },
     { text: "", type: "system" },
   ]);
 
@@ -34,13 +37,16 @@ const Terminal = () => {
       terminalRef.current.scrollTop += e.deltaY;
     }
   };
+
   const handleTerminalClick = () => {
     inputRef.current?.focus();
   };
+
   useEffect(() => {
     if (terminalRef.current)
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
   }, [commandHistory]);
+
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
@@ -93,10 +99,14 @@ const Terminal = () => {
     const cmd = input;
     setInput("");
 
-    // Add User Command Line to History
+    // Add User Command Line to History (Matching the new brutalist prompt)
     setCommandHistory((prev) => [
       ...prev,
-      { type: "command-echo", text: cmd, dir: currentDir },
+      {
+        type: "command-echo",
+        text: `[GUEST@LOCALHOST] ~ % ${cmd}`,
+        dir: currentDir,
+      },
     ]);
 
     const context = {
@@ -110,48 +120,57 @@ const Terminal = () => {
 
   return (
     <div
-      className="flex flex-col h-full w-full bg-transparent font-mono text-[13px] md:text-xs leading-relaxed selection:bg-green-500/30 selection:text-white"
+      className="flex flex-col h-full w-full bg-transparent font-jetmono text-[11px] md:text-xs leading-relaxed text-[#121212] dark:text-[#EEEEEE] selection:bg-black/20 dark:selection:bg-white/20 selection:text-current"
       onClick={handleTerminalClick}
+      data-lenis-prevent
     >
       {/* OUTPUT AREA */}
       <div
         ref={terminalRef}
-        className="flex-1 p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
+        className="flex-1 p-6 md:px-12 md:pt-12 overflow-y-auto scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10 scrollbar-track-transparent"
         onWheel={handleWheel}
-        style={{
-          scrollbarWidth: "thin",
-
-          scrollbarColor: "#00ff88 #0f0f0f",
-        }}
       >
         <TerminalOutput commandHistory={commandHistory} />
 
         {/* Loading Indicator */}
         {isProcessing && (
-          <div className="text-green-500 animate-pulse mt-2">Processing...</div>
+          <div className="animate-pulse mt-4 text-[#666] dark:text-[#888]">
+            [ PROCESSING COMMAND... ]
+          </div>
         )}
       </div>
 
-      {/* INPUT AREA - Seamless */}
-      <div className="px-6 py-4 bg-transparent shrink-0">
-        <form onSubmit={handleSubmit} className="flex items-center gap-3">
-          {/* Minimal Prompt */}
-          <div className="flex items-center gap-2 font-bold text-green-500">
-            <span>➜</span>
-            <span className="text-blue-400">~</span>
-          </div>
+      {/* INPUT AREA - Seamless & Mechanical */}
+      <div className="px-6 md:px-12 pb-12 pt-4 bg-transparent shrink-0">
+        <form
+          onSubmit={handleSubmit}
+          className="relative flex items-center w-full"
+        >
+          {/* The Brutalist Prompt */}
+          <span className="mr-3 opacity-50 whitespace-nowrap">
+            [GUEST@LOCALHOST] ~ %
+          </span>
 
+          {/* The Invisible Real Input (Handles actual typing and mobile keyboards) */}
           <input
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent outline-none text-white placeholder-white/20 caret-green-500 font-bold"
+            className="absolute inset-0 opacity-0 pointer-events-auto text-[16px] md:text-xs w-full h-full"
             autoComplete="off"
             spellCheck="false"
             autoFocus
           />
+
+          {/* The Fake Visual Input (Renders the block cursor) */}
+          <span className="relative pointer-events-none whitespace-pre font-bold flex items-center">
+            {input}
+            <span
+              className={`inline-block w-2.5 h-3.5 bg-[#121212] dark:bg-[#EEEEEE] ml-1 ${isProcessing ? "hidden" : "animate-[pulse_1s_step-end_infinite]"}`}
+            ></span>
+          </span>
         </form>
       </div>
     </div>

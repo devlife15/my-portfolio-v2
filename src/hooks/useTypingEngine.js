@@ -8,13 +8,16 @@ export default function useTypingEngine(targetText, isActive) {
   const [activeKey, setActiveKey] = useState(null);
   const [status, setStatus] = useState("idle");
   const [startTime, setStartTime] = useState(null);
+  // 👇 NEW: We need to lock the time when they finish!
+  const [endTime, setEndTime] = useState(null);
   const [errors, setErrors] = useState(0);
 
   const { playSound } = useSystemSound();
 
-  // 1. PERFORMANCE FIX: We use refs for synchronous tracking to stop the event listener from resetting
   const typedRef = useRef("");
   const timeoutRef = useRef(null);
+  // 👇 NEW: Tracks every single key press to make Accuracy 100% mathematically correct
+  const totalKeystrokesRef = useRef(0);
 
   const handleKeyDown = useCallback(
     (e) => {
@@ -26,7 +29,6 @@ export default function useTypingEngine(targetText, isActive) {
 
       e.preventDefault();
 
-      // 2. RACE CONDITION FIX: Clear the previous timeout if they type incredibly fast
       const keyMap = { " ": "SPACE", Backspace: "BACK", Enter: "ENTER" };
       setActiveKey(keyMap[e.key] || e.key.toUpperCase());
 
@@ -36,6 +38,7 @@ export default function useTypingEngine(targetText, isActive) {
       if (status === "idle") {
         setStatus("running");
         setStartTime(Date.now());
+        setEndTime(null);
       }
 
       const currentTyped = typedRef.current;
@@ -43,29 +46,31 @@ export default function useTypingEngine(targetText, isActive) {
       if (e.key === "Backspace") {
         typedRef.current = currentTyped.slice(0, -1);
         setTyped(typedRef.current);
-        playSound("");
+        playSound("click"); // Using a standard click for backspace
         return;
       }
 
-      // Check against the ref, not the state!
+      // Track that a physical character key was pressed
+      totalKeystrokesRef.current += 1;
+
       const expectedChar = targetText[currentTyped.length];
 
       if (e.key !== expectedChar) {
         setErrors((prev) => prev + 1);
-        playSound("error");
+        playSound("error"); // Play the error sound for typos
       } else {
-        playSound("");
+        playSound("type"); // Play standard type sound
       }
 
       typedRef.current = currentTyped + e.key;
       setTyped(typedRef.current);
 
+      // 👇 THE TIME LOCK: Freeze the clock the exact millisecond they finish
       if (typedRef.current.length === targetText.length) {
         setStatus("completed");
+        setEndTime(Date.now());
       }
     },
-    // Notice how `typed` is no longer in this dependency array!
-    // The listener never detaches now.
     [status, targetText, playSound],
   );
 
@@ -75,25 +80,43 @@ export default function useTypingEngine(targetText, isActive) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown, isActive]);
 
+  // 👇 THE MATH FIX: True Net WPM Calculation
   const calculateWPM = () => {
     if (!startTime || typed.length === 0) return 0;
-    const timeElapsed = (Date.now() - startTime) / 60000;
-    const wordsTyped = typed.length / 5;
-    return Math.round(wordsTyped / timeElapsed);
+
+    // Freeze the time elapsed if completed, otherwise use current time
+    const finalTime = endTime || Date.now();
+    const timeElapsedInMinutes = (finalTime - startTime) / 60000;
+
+    // Only count correctly typed characters for Net WPM
+    let correctChars = 0;
+    for (let i = 0; i < typed.length; i++) {
+      if (typed[i] === targetText[i]) correctChars++;
+    }
+
+    const wordsTyped = correctChars / 5;
+    return Math.max(0, Math.round(wordsTyped / timeElapsedInMinutes));
   };
 
+  // 👇 THE MATH FIX: True Accuracy Calculation
   const calculateAccuracy = () => {
-    if (typed.length === 0) return 100;
-    const correctChars = typed.length - errors;
-    return Math.max(0, Math.round((correctChars / typed.length) * 100));
+    if (totalKeystrokesRef.current === 0) return 100;
+
+    // Total physical keystrokes minus mistakes, divided by total keystrokes
+    const correctKeystrokes = totalKeystrokesRef.current - errors;
+    return Math.max(
+      0,
+      Math.round((correctKeystrokes / totalKeystrokesRef.current) * 100),
+    );
   };
 
-  // NEW: Auto-reset the engine whenever the user selects a new code snippet
   useEffect(() => {
     setTyped("");
     typedRef.current = "";
+    totalKeystrokesRef.current = 0;
     setStatus("idle");
     setStartTime(null);
+    setEndTime(null);
     setErrors(0);
   }, [targetText]);
 
@@ -105,9 +128,11 @@ export default function useTypingEngine(targetText, isActive) {
     accuracy: calculateAccuracy(),
     reset: () => {
       setTyped("");
-      typedRef.current = ""; // Reset the ref too!
+      typedRef.current = "";
+      totalKeystrokesRef.current = 0;
       setStatus("idle");
       setStartTime(null);
+      setEndTime(null);
       setErrors(0);
     },
   };

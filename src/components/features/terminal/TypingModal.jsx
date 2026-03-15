@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FiX, FiWifi } from "react-icons/fi";
+import { FiX, FiRefreshCcw } from "react-icons/fi";
 import useSystemSound from "@/hooks/useSystemSound";
-import HolographicKeyboard from "../HolographicKeyboard";
 import useTypingEngine from "@/hooks/useTypingEngine";
 import { typingSnippets } from "@/data/typingSnippets";
 
@@ -14,22 +13,32 @@ const TypingModal = ({ isOpen, onClose }) => {
   const { playSound } = useSystemSound();
   const snippet = typingSnippets[activeSnippetIndex];
 
-  const { typed, activeKey, status, wpm, accuracy, reset } = useTypingEngine(
+  const { typed, status, wpm, accuracy, reset } = useTypingEngine(
     snippet.code,
     isOpen,
   );
 
+  // Focus locking mechanism
   useEffect(() => {
     if (isOpen) {
       setIsRendered(true);
       playSound("terminalopen");
+    } else {
+      setTimeout(() => setIsRendered(false), 300);
+    }
+  }, [isOpen, playSound]);
+
+  // 2. Handles the Focus Listener and Reset logic
+  useEffect(() => {
+    if (isOpen) {
       const handleFocus = () => window.focus();
       window.addEventListener("click", handleFocus);
       return () => window.removeEventListener("click", handleFocus);
     } else {
-      setTimeout(() => setIsRendered(false), 300);
       reset();
     }
+    // We intentionally leave 'reset' out of the array so it doesn't fire on every keystroke
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const handleClose = () => {
@@ -37,118 +46,148 @@ const TypingModal = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  const handleSnippetChange = (index) => {
+    playSound("click");
+    setActiveSnippetIndex(index);
+    reset();
+  };
+
+  // 1. The Text Grid Rendering Engine
   const renderedText = React.useMemo(() => {
     return snippet.code.split("").map((char, index) => {
-      let color = "text-[#444]";
-      let bg = "";
+      const isCurrent = index === typed.length;
+      const isTyped = index < typed.length;
+      const isCorrect = isTyped && typed[index] === char;
+      const isIncorrect = isTyped && typed[index] !== char;
       const isSpace = char === " ";
-      const displayChar = isSpace ? "␣" : char;
 
-      if (index < typed.length) {
-        color =
-          typed[index] === char
-            ? "text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]"
-            : "text-red-500";
-        bg = typed[index] !== char ? "bg-red-500/20" : "";
-      } else if (isSpace) {
-        color = "text-[#222]";
+      // Base: Dim grey for untyped
+      let colorClass = "text-[#555]";
+      let bgClass = "";
+
+      if (isCorrect) {
+        // Bright white text with a faint glow for correctly typed letters
+        colorClass =
+          "text-[#e2e8f0] drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]";
+      } else if (isIncorrect) {
+        // Red text and subtle red background for mistakes
+        colorClass = "text-[#ff4a4a]";
+        bgClass = isSpace ? "bg-[#ff4a4a]/30" : "bg-[#ff4a4a]/10";
       }
+
+      // The Gliding Caret (Smooth vertical line attached to the current letter)
+      const caretClass =
+        isCurrent && status !== "completed"
+          ? "relative after:content-[''] after:absolute after:left-0 after:top-[10%] after:bottom-[10%] after:w-[2px] after:bg-blue-500 after:animate-pulse after:shadow-[0_0_8px_rgba(59,130,246,0.8)]"
+          : "";
 
       return (
         <span
           key={index}
-          className={`${color} ${bg} transition-colors duration-75`}
+          className={`${colorClass} ${bgClass} ${caretClass} transition-colors duration-100 relative`}
         >
-          {displayChar}
+          {/* We render a non-breaking space for actual spaces to maintain grid integrity */}
+          {isSpace ? "\u00A0" : char}
         </span>
       );
     });
-  }, [typed, snippet.code]);
+  }, [typed, snippet.code, status]);
 
   if (!isRendered) return null;
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
-        isOpen
-          ? "opacity-100 backdrop-blur-sm"
-          : "opacity-0 pointer-events-none"
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-500 bg-black/80 backdrop-blur-xl ${
+        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
-      <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
+      <div className="absolute inset-0" onClick={handleClose} />
 
-      <div
-        className={`relative w-full max-w-5xl flex flex-col transform transition-all duration-500 ease-out border border-white/10 rounded-lg overflow-hidden shadow-[0_0_50px_-10px_rgba(59,130,246,0.15)] ${
-          isOpen
-            ? "scale-100 translate-y-0 opacity-100"
-            : "scale-95 translate-y-10 opacity-0"
-        }`}
-        style={{
-          height: "min(700px, 85vh)",
-          backgroundColor: "rgba(10, 10, 10, 0.8)",
-          backdropFilter: "blur(12px)",
-        }}
-      >
-        {/* HEADER */}
-        <div className="h-9 shrink-0 bg-white/3 border-b border-white/5 flex items-center justify-between px-4 select-none">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-[10px] font-mono text-blue-500/80 uppercase tracking-widest">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
-              </span>
-              TYPE_ENGINE_v2.0
-            </div>
+      <div className="relative w-full max-w-5xl h-[70vh] flex flex-col items-center justify-center pointer-events-none">
+        {/* 2. THE HUD (Fades out when typing starts!) */}
+        <div
+          className={`absolute top-0 w-full flex flex-col md:flex-row items-center justify-between px-8 transition-opacity duration-700 pointer-events-auto ${
+            status === "typing" ? "opacity-10" : "opacity-100"
+          }`}
+        >
+          {/* Snippet Selector */}
+          <div className="flex gap-4 mb-4 md:mb-0 text-xs font-mono tracking-widest text-[#666]">
+            {typingSnippets.map((s, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleSnippetChange(idx)}
+                className={`transition-colors uppercase ${
+                  activeSnippetIndex === idx
+                    ? "text-blue-400"
+                    : "hover:text-[#aaa]"
+                }`}
+              >
+                [{s.language}]
+              </button>
+            ))}
           </div>
-          <div className="flex items-center gap-4">
-            <FiWifi size={12} className="text-gray-600" />
-            <div className="w-px h-3 bg-white/10"></div>
+
+          {/* Title & Close */}
+          <div className="flex items-center gap-6">
+            <span className="text-[12px] font-mono text-white uppercase tracking-[0.3em]">
+              SYS_DIAGNOSTIC // {snippet.title}
+            </span>
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-white transition-colors"
+              className="text-[#555] hover:text-white transition-colors p-2"
             >
-              <FiX size={14} />
+              <FiX size={20} />
             </button>
           </div>
         </div>
 
-        <div className="flex-1 overflow-hidden relative p-4 md:p-6 flex flex-col gap-4">
-          <div className="absolute inset-0 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] z-10"></div>
+        {/* 3. THE TEXT GRID (Center Stage) */}
+        <div className="w-full max-w-4xl px-8 mt-12 mb-12 relative z-20">
+          <div
+            className="font-mono text-2xl md:text-3xl leading-relaxed md:leading-loose tracking-wide flex flex-wrap break-all select-none"
+            style={{ wordBreak: "break-word" }}
+          >
+            {renderedText}
+          </div>
+        </div>
 
-          <div className="relative z-20 p-4 md:p-5 bg-[#050505]/60 backdrop-blur-md rounded-xl border border-white/10 font-mono text-sm md:text-base leading-relaxed shadow-2xl flex-1 flex flex-col justify-center">
-            <div className="mb-3 text-xs text-[#666] uppercase tracking-widest flex justify-between">
-              <span>
-                {snippet.language} // {snippet.title}
-              </span>
-              <button
-                onClick={reset}
-                className="hover:text-blue-400 transition-colors"
-              >
-                [ RESET_ENGINE ]
-              </button>
-            </div>
-
-            <div className="flex flex-wrap break-all">
-              {renderedText}
-              {status !== "completed" && (
-                <span className="w-2 h-4 md:h-5 bg-blue-500 animate-pulse ml-0.5 mt-0.5 rounded-sm" />
-              )}
-            </div>
+        {/* 4. THE LIVE STATS (Bottom HUD) */}
+        <div
+          className={`absolute bottom-0 w-full flex items-center justify-center gap-12 font-mono text-xl transition-opacity duration-700 pointer-events-auto ${
+            status === "typing" ? "opacity-20" : "opacity-100"
+          }`}
+        >
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-[#555] tracking-widest uppercase mb-1">
+              WPM
+            </span>
+            <span
+              className={`transition-colors ${status === "completed" ? "text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" : "text-[#eee]"}`}
+            >
+              {wpm}
+            </span>
           </div>
 
-          <div className="relative z-20 shrink-0 mt-auto">
-            <HolographicKeyboard
-              activeKey={activeKey}
-              wpm={wpm}
-              accuracy={accuracy}
-              status={status}
-              snippets={typingSnippets}
-              activeIndex={activeSnippetIndex}
-              onSelectSnippet={(index) => {
-                playSound("click");
-                setActiveSnippetIndex(index);
-              }}
-            />
+          <button
+            onClick={() => {
+              playSound("click");
+              reset();
+            }}
+            className="text-[#444] hover:text-white transition-colors mt-4 p-3 rounded-full hover:bg-white/5 active:scale-90"
+            title="Reset (Tab)"
+          >
+            <FiRefreshCcw size={20} />
+          </button>
+
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] text-[#555] tracking-widest uppercase mb-1">
+              ACC
+            </span>
+            <span
+              className={`transition-colors ${status === "completed" ? "text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" : "text-[#eee]"}`}
+            >
+              {accuracy}%
+            </span>
           </div>
         </div>
       </div>

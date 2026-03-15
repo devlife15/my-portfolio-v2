@@ -16,6 +16,10 @@ const useSystemSound = () => {
       startup: "/songs/startup.mp3",
       terminalopen: "/songs/terminal-open.wav",
       terminalclose: "/songs/terminal-close.wav",
+      memoryswipe: "/songs/memoryswipe.mp3",
+      openmemory: "/songs/openmemory.mp3",
+      type: "/songs/typing.mp3",
+      memoryclick: "/songs/memoryclick.mp3",
     };
 
     Object.entries(soundFiles).forEach(([key, path]) => {
@@ -71,6 +75,18 @@ const useSystemSound = () => {
         volume = 0.5;
         break;
       case "toggle":
+        volume = 0.5;
+        break;
+      case "memoryswipe":
+        volume = 0.4;
+        break;
+      case "openmemory":
+        volume = 0.4;
+        break;
+      case "type":
+        volume = 1;
+        break;
+      case "memoryclick":
         volume = 0.5;
         break;
     }
