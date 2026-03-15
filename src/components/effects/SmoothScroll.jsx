@@ -2,29 +2,29 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
+import gsap from "gsap";
 
 const SmoothScroll = ({ children }) => {
   useEffect(() => {
-    // 1. Initialize Lenis
     const lenis = new Lenis({
-      duration: 1.2, // The "heaviness" of the scroll (default is 1.2)
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // smooth easing
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       direction: "vertical",
       gestureDirection: "vertical",
       smooth: true,
-      smoothTouch: false, // Keep touch scrolling native (better mobile feel)
+      smoothTouch: false,
     });
 
-    // 2. The Animation Loop
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+    // ✅ Fix 1: GSAP ticker instead of your own RAF loop
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
 
-    requestAnimationFrame(raf);
+    // ✅ Fix 2: Disable lag catch-up jump
+    gsap.ticker.lagSmoothing(0);
 
-    // 3. Cleanup on unmount
     return () => {
+      gsap.ticker.remove((time) => lenis.raf(time * 1000));
       lenis.destroy();
     };
   }, []);

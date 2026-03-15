@@ -30,7 +30,8 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "src/components/features/CoverFlowModal.jsx",
-    "src/components/PhysicsGraveyard.jsx"
+    "src/components/PhysicsGraveyard.jsx",
+    "src/app/about/page.jsx"
   ],
   "exclude": ["node_modules"]
 }
