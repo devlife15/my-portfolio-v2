@@ -75,6 +75,7 @@ const ProjectSection = ({ sectionRef }) => {
             year="2026"
             src="/projects/1.jpg"
             playSound={playSound}
+            description={"AI Help Desk Platform"}
           />
         </div>
 
@@ -89,7 +90,7 @@ const ProjectSection = ({ sectionRef }) => {
 
         <div className="project-card-wrapper opacity-0 w-full">
           <ProjectCard
-            title="Eumlet Platform"
+            title="Placeholder 3"
             year="2025"
             src="/projects/3.jpg"
             playSound={playSound}

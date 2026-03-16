@@ -39,18 +39,18 @@ const PodcastCard = ({ title, show, episode, image, link, playSound }) => {
       {/* 4. INFO */}
       <div className="flex flex-col gap-1">
         {/* 👇 Show Name: Muted tone, darkens on hover */}
-        <span className="font-plex text-[10px] text-[#888888] dark:text-[#555555] uppercase tracking-wider transition-colors duration-300 group-hover:text-[#111111] dark:group-hover:text-[#888888]">
+        <span className="font-jetmono text-[10px] text-[#888888] dark:text-[#555555] uppercase tracking-wider transition-colors duration-300 group-hover:text-[#111111] dark:group-hover:text-[#888888]">
           {show}
         </span>
 
         {/* 👇 Title: Deep charcoal in light mode, snaps to black on hover */}
-        <h3 className="font-editorial italic text-[16px] leading-tight text-[#444444] dark:text-[#CCCCCC] group-hover:text-[#111111] dark:group-hover:text-white transition-colors duration-300 line-clamp-2">
+        <h3 className="font-editorial italic text-sm md:text-lg leading-tight text-[#444444] dark:text-[#CCCCCC] group-hover:text-[#111111] dark:group-hover:text-white transition-colors duration-300 line-clamp-2">
           {title}
         </h3>
 
         {/* 👇 Episode Number: Subtle watermark tone */}
         {episode && (
-          <span className="font-plex text-[12px] text-[#999999] dark:text-[#444444] transition-colors duration-300">
+          <span className="font-jetmono text-[12px] text-[#999999] dark:text-[#444444] transition-colors duration-300">
             Ep. {episode}
           </span>
         )}

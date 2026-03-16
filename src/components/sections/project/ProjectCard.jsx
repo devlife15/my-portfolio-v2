@@ -63,11 +63,11 @@ const ProjectCard = ({ title, description, year, src, playSound }) => {
         onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="w-full aspect-video bg-black/5 dark:bg-[#111111] border border-black/10 dark:border-white/5 mb-4 overflow-hidden relative transition-colors duration-300 cursor-none"
+        className="w-full aspect-video bg-black/5 dark:bg-[#121212] border border-black/10 dark:border-white/5 mb-4 overflow-hidden relative transition-colors duration-300 cursor-none"
       >
         <div
           ref={cursorRef}
-          className="absolute top-0 left-0 w-20 h-20 rounded-full bg-[#111111] text-[#EEEEEE] dark:bg-white dark:text-black flex items-center justify-center font-plex text-[11px] tracking-widest uppercase z-20 pointer-events-none opacity-0 scale-50"
+          className="absolute top-0 left-0 w-20 h-20 rounded-full bg-[#121212] text-[#EEEEEE] dark:bg-white dark:text-black flex items-center justify-center font-plex text-[11px] tracking-widest uppercase z-20 pointer-events-none opacity-0 scale-50"
         >
           View
         </div>
@@ -92,14 +92,14 @@ const ProjectCard = ({ title, description, year, src, playSound }) => {
 
       <div className="flex justify-between items-center">
         <div className="flex flex-col">
-          <h3 className="font-switzer font-light uppercase text-[13px] text-[#111111] dark:text-[#EEEEEE] group-hover:text-black dark:group-hover:text-white transition-colors duration-300">
+          <h3 className="font-editorial italic text-sm md:text-lg text-[#121212] dark:text-[#EEEEEE] group-hover:text-black dark:group-hover:text-white transition-colors duration-300">
             {title}
           </h3>
-          <p className="font-mono text-[14px] text-[#666666] dark:text-[#888888] line-clamp-2 transition-colors duration-300">
+          <p className="font-jetmono text-[14px] text-[#666666] dark:text-[#888888] line-clamp-2 transition-colors duration-300">
             {description}
           </p>
         </div>
-        <span className="font-mono text-[12px] text-[#999999] dark:text-[#444444] shrink-0 transition-colors duration-300">
+        <span className="font-jetmono text-[12px] text-[#999999] dark:text-[#444444] shrink-0 transition-colors duration-300">
           {year}
         </span>
       </div>
