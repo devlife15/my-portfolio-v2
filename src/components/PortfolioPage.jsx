@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
-import PreLoader from "../components/effects/PreLoader";
+// THE FIX: Removed PreLoader import entirely
 import BootScreen from "./layout/BootScreen";
 import { useLofi } from "../hooks/useLofi";
 import TerminalModal from "./features/terminal/TerminalModal";
@@ -22,7 +22,7 @@ import PodcastsSection from "./sections/PodcastsSection";
 import FooterSection from "./sections/FooterSection";
 
 const PortfolioPage = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  // THE FIX: Removed isLoading state completely. We only care if they have booted.
   const [hasEntered, setHasEntered] = useState(false);
   const { isPlaying, togglePlay, nextTrack } = useLofi();
 
@@ -38,7 +38,6 @@ const PortfolioPage = () => {
   useEffect(() => {
     const hasBooted = sessionStorage.getItem("portfolioBooted");
     if (hasBooted) {
-      setIsLoading(false);
       setHasEntered(true);
     }
   }, []);
@@ -58,11 +57,9 @@ const PortfolioPage = () => {
 
       tl.fromTo(
         navbarRef.current,
-        // No X-axis math required anymore. Flexbox handles it natively.
         { opacity: 0, y: -20 },
         { opacity: 1, y: 0, duration: 0.7, clearProps: "transform" },
       )
-        // Removed the stagger overlap so the Dock lands completely cleanly
         .fromTo(
           ".hero-item",
           { opacity: 0, y: 20 },
@@ -93,12 +90,11 @@ const PortfolioPage = () => {
 
   return (
     <div className="min-h-screen text-[#888888] selection:bg-white/20 selection:text-white flex flex-col">
-      {isLoading && <PreLoader onComplete={() => setIsLoading(false)} />}
-      {!isLoading && !hasEntered && <BootScreen onEnter={handleEnter} />}
+      {/* THE FIX: Replaced complex loading logic with a simple binary gate */}
+      {!hasEntered && <BootScreen onEnter={handleEnter} />}
 
-      {!isLoading && hasEntered && (
+      {hasEntered && (
         <div className="w-full flex flex-col grow relative">
-          {/* THE FIX: Ripped out the sticky wrapper. The Navbar now floats freely. */}
           <Navbar ref={navbarRef} />
 
           <TerminalModal
@@ -125,7 +121,6 @@ const PortfolioPage = () => {
               />
             </div>
 
-            {/* Changed pb-10 to pb-32 to create a massive invisible bumper for the scroll */}
             <main className="relative z-10 w-full px-6 xl:px-12 pb-10 flex flex-col border-x-0 xl:border-x border-black/3 dark:border-white/3">
               <HeroSection ref={heroRef} />
               <ProjectSection />
