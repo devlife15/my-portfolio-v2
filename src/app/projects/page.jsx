@@ -242,7 +242,6 @@ const ProjectsPage = () => {
                     className="object-cover opacity-40 transition-opacity duration-700 group-hover:opacity-60"
                     priority
                   />
-                  <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-30 mix-blend-overlay pointer-events-none"></div>
                 </div>
               </div>
 

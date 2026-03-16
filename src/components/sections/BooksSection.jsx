@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import LibraryCard from "./library/LibraryCard";
+import LibraryCard from "./library/LibraryCard"; // Adjust import path if needed
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -30,9 +30,10 @@ const BooksSection = ({ sectionRef }) => {
       );
 
       // 2. Stagger the individual book rows
+      // THE FIX: This now correctly targets the wrappers below
       gsap.fromTo(
         ".library-row-wrapper",
-        { opacity: 0, y: 20 },
+        { opacity: 0, y: 15 },
         {
           opacity: 1,
           y: 0,
@@ -54,8 +55,7 @@ const BooksSection = ({ sectionRef }) => {
   return (
     <section ref={sectionRef || containerRef} className="w-full pb-15">
       {/* 1. The Architectural Header */}
-      {/* 👇 Added dual-theme borders and color transitions */}
-      <div className="library-header flex items-baseline gap-3 mb-5 border-b border-black/10 dark:border-white/5 pb-6 transition-colors duration-300">
+      <div className="library-header flex items-baseline gap-3 mb-2 border-b border-black/10 dark:border-white/5 pb-6 transition-colors duration-300">
         <h2 className="font-switzer uppercase text-2xl md:text-2xl font-medium tracking-tight text-[#111111] dark:text-[#EEEEEE] transition-colors duration-300">
           Reading
         </h2>
@@ -64,33 +64,38 @@ const BooksSection = ({ sectionRef }) => {
         </span>
       </div>
 
-      {/* 2. The Ledger-Style List */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-10">
-        <div className="library-card-wrapper">
+      {/* 2. The Horizontal Ledger List */}
+      {/* THE FIX: Changed from grid layout to a simple vertical flex column */}
+      <div className="flex flex-col w-full">
+        {/* Row 1 */}
+        <div className="library-row-wrapper border-b border-black/3 dark:border-white/5 last:border-0">
           <LibraryCard
-            title="Functional Programming in Scala"
-            author="Michael Pilquist, Rúnar Bjarnason & Paul Chiusano"
+            title="Spring Starts Here"
+            author="Laurentiu Spilca"
             status="Reading"
-            cover="https://images.manning.com/360/480/resize/book/7/28e607e-d1f1-4a84-badc-d8f436f4e4b9/Pilquist-2ed-HI.png"
-            link="https://www.manning.com/books/functional-programming-in-scala-second-edition"
+            cover="https://images.manning.com/360/480/resize/book/d/8767025-cf7f-4249-94f4-083c2b16b2e7/Spilca2-HI.png"
+            link="https://www.manning.com/books/spring-start-here"
           />
         </div>
 
-        <div className="library-card-wrapper">
+        {/* Row 2 */}
+        <div className="library-row-wrapper border-b border-black/3 dark:border-white/5 last:border-0">
           <LibraryCard
             title="Atomic Habits"
             author="James Clear"
             status="Reading"
-            cover="https://www.crossword.in/cdn/shop/files/Atomic_Habits_1_1.webp"
+            cover="/Me.png"
             link="https://www.amazon.in/Atomic-Habits-James-Clear/dp/1847941834"
           />
         </div>
-        <div className="library-card-wrapper">
+
+        {/* Row 3 */}
+        <div className="library-row-wrapper border-b border-black/3 dark:border-white/5 last:border-0">
           <LibraryCard
             title="Source Code"
             author="Bill Gates"
             status="To Read"
-            cover="https://www.crossword.in/cdn/shop/files/71yR_jQLqXL._SL1500.jpg"
+            cover="/Me.png"
             link="https://www.amazon.in/Atomic-Habits-James-Clear/dp/1847941834"
           />
         </div>

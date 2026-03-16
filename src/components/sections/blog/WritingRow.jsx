@@ -20,7 +20,7 @@ const WritingRow = ({ title, date, href }) => {
         </span>
 
         {/* 👇 Title: Rests at a deep charcoal in light mode, snaps to sharp black on hover */}
-        <h3 className="font-editorial text-[16px] md:text-[20px] italic text-[#444444] dark:text-[#CCCCCC] group-hover:text-[#111111] dark:group-hover:text-white transition-colors duration-300">
+        <h3 className="font-editorial text-[16px] md:text-[18px] italic text-[#444444] dark:text-[#CCCCCC] group-hover:text-[#111111] dark:group-hover:text-white transition-colors duration-300">
           {title}
         </h3>
       </div>
